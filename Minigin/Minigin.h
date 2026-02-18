@@ -8,6 +8,10 @@ namespace dae
 	class Minigin final
 	{
 		bool m_quit{};
+		float m_LastFrameTime{};
+		float m_Lag{};
+		const float m_FixedTimeStep{ 1.0f / 60.0f };
+
 	public:
 		explicit Minigin(const std::filesystem::path& dataPath);
 		~Minigin();

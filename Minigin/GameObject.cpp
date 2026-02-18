@@ -5,12 +5,43 @@
 
 dae::GameObject::~GameObject() = default;
 
-void dae::GameObject::Update(){}
+void dae::GameObject::ProcessPendingRemovals()
+{
+	if (m_PendingRemovals.empty())
+		return;
 
+	std::sort(m_PendingRemovals.begin(), m_PendingRemovals.end(), std::greater<size_t>());
+
+	for (size_t index : m_PendingRemovals)
+	{
+		if (index < m_components.size())
+		{
+			m_components.erase(m_components.begin() + index);
+		}
+	}
+	m_PendingRemovals.clear();
+}
+
+void dae::GameObject::Update(float dt )
+{
+	for (auto& c : m_components)
+		c->Update(dt);
+
+	ProcessPendingRemovals();
+}
+
+void dae::GameObject::FixedUpdate(float fixedDt)
+{
+	for (auto& c : m_components)
+		c->FixedUpdate(fixedDt);
+
+	ProcessPendingRemovals();
+}
+//TO DO FIX LATER RENDERER 
 void dae::GameObject::Render() const
 {
-	const auto& pos = m_transform.GetPosition();
-	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+	for (const auto& c : m_components)
+		c->Render();
 }
 
 void dae::GameObject::SetTexture(const std::string& filename)
