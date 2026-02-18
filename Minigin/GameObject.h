@@ -44,7 +44,7 @@ namespace dae
 
 		template<typename T>
 		bool RemoveComponent();
-
+		
 
 		GameObject() = default;
 		~GameObject();
@@ -52,6 +52,7 @@ namespace dae
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
+
 	};
 	template<typename T, typename... Args>
 	T& GameObject::AddComponent(Args&&... args)
