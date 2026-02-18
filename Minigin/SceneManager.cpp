@@ -20,13 +20,13 @@ void dae::SceneManager::Update(float dt)
 {
 	for(auto& scene : m_scenes)
 	{
-		scene->FixedUpdate(dt);
+		scene->Update(dt);
 	}
 }
 void dae::SceneManager::FixedUpdate(float fixedDt)
 {
 	for (auto& scene : m_scenes)
 	{
-		scene->Update(fixedDt);
+		scene->FixedUpdate(fixedDt);
 	}
 }

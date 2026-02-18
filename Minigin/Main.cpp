@@ -15,6 +15,7 @@
 #include "RenderComponent.h"
 #include "TextComponent.h"
 #include "FPSComponent.h"
+#include "WiggleComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -22,7 +23,7 @@ namespace fs = std::filesystem;
 static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
-
+	//Background
 	{
 		auto go = std::make_unique<dae::GameObject>();
 		go->AddComponent<dae::TransformComponent>().SetPosition(0.f, 0.f);
@@ -30,15 +31,16 @@ static void load()
 		go->AddComponent<dae::RenderComponent>(tex);
 		scene.Add(std::move(go));
 	}
-	
+	//Logo
 	{
 		auto go = std::make_unique<dae::GameObject>();
 		go->AddComponent<dae::TransformComponent>().SetPosition(358.f, 180.f);
 		auto tex = dae::ResourceManager::GetInstance().LoadTexture("logo.png");
 		go->AddComponent<dae::RenderComponent>(tex);
+		go->AddComponent<dae::WiggleComponent>(80.f);
 		scene.Add(std::move(go));
 	}
-	
+	//Title text
 	{
 		auto go = std::make_unique<dae::GameObject>();
 		go->AddComponent<dae::TransformComponent>().SetPosition(292.f, 20.f);

@@ -102,6 +102,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 void dae::Minigin::RunOneFrame()
 {
 	using clock = std::chrono::high_resolution_clock;
+	const auto frameStart = clock::now();
 	static auto lastTime = clock::now();
 
 	const auto currentTime = clock::now();
@@ -117,8 +118,20 @@ void dae::Minigin::RunOneFrame()
 	while (m_Lag >= m_FixedTimeStep)
 	{
 		SceneManager::GetInstance().FixedUpdate(m_FixedTimeStep);
+
 		m_Lag -= m_FixedTimeStep;
 	}	
 	SceneManager::GetInstance().Update(dt);
+
 	Renderer::GetInstance().Render();
+
+	const auto frameEnd = clock::now();
+	float frameTime = std::chrono::duration<float>(frameEnd - frameStart).count();
+
+	if (frameTime < m_FixedTimeStep)
+	{
+		Uint32 delayMs = static_cast<Uint32>((m_FixedTimeStep - frameTime) * 1000.0f);
+		if (delayMs > 0)
+			SDL_Delay(delayMs);
+	}
 }
