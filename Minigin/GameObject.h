@@ -23,9 +23,9 @@ namespace dae
 		void ProcessPendingRemovals();
 	public:
 
-		virtual void Update(float dt);
-		virtual void FixedUpdate(float fixedDt);
-		virtual void Render() const;
+		void Update(float dt);
+		void FixedUpdate(float fixedDt);
+		void Render() const;
 		
 		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
@@ -47,7 +47,7 @@ namespace dae
 
 
 		GameObject() = default;
-		virtual ~GameObject();
+		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
