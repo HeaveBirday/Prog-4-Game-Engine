@@ -91,7 +91,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
 #ifndef __EMSCRIPTEN__
-	auto last_time = std::chrono::high_resolution_clock::now();
 	while (!m_quit)
 		RunOneFrame();
 #else
@@ -103,13 +102,12 @@ void dae::Minigin::RunOneFrame()
 {
 	using clock = std::chrono::high_resolution_clock;
 	const auto frameStart = clock::now();
-	static auto lastTime = clock::now();
 
+	static auto lastTime = clock::now();
 	const auto currentTime = clock::now();
 	float dt = std::chrono::duration<float>(currentTime - lastTime).count();
 	lastTime = currentTime;
 
-	// avoid huge dt after alt-tab/breakpoints
 	if (dt > 0.25f) dt = 0.25f;
 
 	m_quit = !InputManager::GetInstance().ProcessInput();

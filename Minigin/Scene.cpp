@@ -31,7 +31,8 @@ void dae::Scene::FixedUpdate(float fixedDt)
 {
 	for (auto& object : m_objects)
 	{
-		object->FixedUpdate(fixedDt);
+		if (!object->HasParent())
+			object->FixedUpdate(fixedDt);
 	}
 	std::erase_if(m_objects, [](const std::unique_ptr<GameObject>& obj)
 		{
@@ -43,7 +44,8 @@ void Scene::Update(float dt)
 {
 	for(auto& object : m_objects)
 	{
-		object->Update(dt);
+		if (!object->HasParent())
+			object->Update(dt);
 	}
 	std::erase_if(m_objects, [](const std::unique_ptr<GameObject>& obj)
 		{
@@ -55,7 +57,9 @@ void Scene::Render() const
 {
 	for (const auto& object : m_objects)
 	{
-		object->Render();
+		if (!object->HasParent())
+			object->Render();
 	}
+		
 }
 

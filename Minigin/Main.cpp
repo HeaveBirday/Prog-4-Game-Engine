@@ -16,6 +16,7 @@
 #include "TextComponent.h"
 #include "FPSComponent.h"
 #include "WiggleComponent.h"
+#include "RotatorComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -24,41 +25,65 @@ static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	//Background
-	{
+	
 		auto go = std::make_unique<dae::GameObject>();
-		go->AddComponent<dae::TransformComponent>().SetPosition(0.f, 0.f);
+		go->SetPosition(0.f, 0.f);
 		auto tex = dae::ResourceManager::GetInstance().LoadTexture("background.png");
 		go->AddComponent<dae::RenderComponent>(tex);
 		scene.Add(std::move(go));
-	}
+	
 	//Logo
-	{
-		auto go = std::make_unique<dae::GameObject>();
-		go->AddComponent<dae::TransformComponent>().SetPosition(358.f, 180.f);
-		auto tex = dae::ResourceManager::GetInstance().LoadTexture("logo.png");
-		go->AddComponent<dae::RenderComponent>(tex);
+	
+		go = std::make_unique<dae::GameObject>();
+		go->SetPosition(358.f, 180.f);
+		auto text = dae::ResourceManager::GetInstance().LoadTexture("logo.png");
+		go->AddComponent<dae::RenderComponent>(text);
 		go->AddComponent<dae::WiggleComponent>(80.f);
 		scene.Add(std::move(go));
-	}
+	
 	//Title text
-	{
-		auto go = std::make_unique<dae::GameObject>();
-		go->AddComponent<dae::TransformComponent>().SetPosition(292.f, 20.f);
+	
+		go = std::make_unique<dae::GameObject>();
+		go->SetPosition(292.f, 20.f);
 		auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-		auto& text = go->AddComponent<dae::TextComponent>(font, SDL_Color{ 255, 255, 0, 255 });
-		text.SetText("Programming 4 Assignment");
+		auto& txtComponent = go->AddComponent<dae::TextComponent>(font, SDL_Color{ 255, 255, 0, 255 });
+		txtComponent.SetText("Programming 4 Assignment");
 		scene.Add(std::move(go));
-	}
+	
 	//FPS Counter
-	{
-		auto go = std::make_unique<dae::GameObject>();
-		go->AddComponent<dae::TransformComponent>().SetPosition(10.f, 10.f);
-		auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
-		auto& text = go->AddComponent<dae::TextComponent>(font, SDL_Color{ 255, 255, 255, 255 });
-		text.SetText("0 FPS");
+	
+		go = std::make_unique<dae::GameObject>();
+		go->SetPosition(10.f, 10.f);
+		auto fpsFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
+		auto& fpsText = go->AddComponent<dae::TextComponent>(fpsFont, SDL_Color{ 255, 255, 255, 255 });
+		fpsText.SetText("0 FPS");
 		go->AddComponent<dae::FPSComponent>(0.01f);
 		scene.Add(std::move(go));
-	}
+	
+	//Ball Excercise Pivots SceneGraph Child/Parent
+
+		// pivot at center of screen
+		auto pivot = std::make_unique<dae::GameObject>();
+		pivot->SetPosition(400.f, 300.f); // adjust to your window center
+		auto* pivotPtr = pivot.get();
+		scene.Add(std::move(pivot));
+
+		// ball A (child of pivot)
+		auto ballTex = dae::ResourceManager::GetInstance().LoadTexture("ball.png");
+
+		auto ballA = std::make_unique<dae::GameObject>();
+		ballA->SetParent(pivotPtr, true);
+		ballA->AddComponent<dae::RenderComponent>(ballTex);
+		ballA->AddComponent<dae::RotatorComponent>(120.f, 2.0f); // radius, speed
+		auto* ballAPtr = ballA.get();
+		scene.Add(std::move(ballA));
+
+		// ball B (child of ball A)
+		auto ballB = std::make_unique<dae::GameObject>();
+		ballB->SetParent(ballAPtr, true);
+		ballB->AddComponent<dae::RenderComponent>(ballTex);
+		ballB->AddComponent<dae::RotatorComponent>(60.f, -4.0f); // opposite direction
+		scene.Add(std::move(ballB));
 }
 
 int main(int, char*[]) 

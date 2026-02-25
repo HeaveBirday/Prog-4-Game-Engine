@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "Transform.h"
 #include "Component.h"
+#include "TransformComponent.h"
 #include <algorithm>
 #include <vector>
 #include <type_traits>
+#include <cassert>
 
 namespace dae
 {
@@ -13,25 +14,41 @@ namespace dae
 	class GameObject final
 	{
 	private:
-
-		Transform m_transform{};
 		std::shared_ptr<Texture2D> m_texture{};
 		bool m_IsDestroyed{false};
+
+		TransformComponent* m_TransformPtr{ nullptr };
 
 		std::vector<std::unique_ptr<Component>> m_components;
 		std::vector<size_t> m_PendingRemovals{};
 		void ProcessPendingRemovals();
+
+		GameObject* m_parent{ nullptr };
+		std::vector<GameObject*> m_children{};
+		void AddChild_Internally(GameObject* child);
+		void RemoveChild_Internally(GameObject* child);
 	public:
+
+		TransformComponent* GetTransform() const { return m_TransformPtr; }
+		void SetPosition(float x, float y);
 
 		void Update(float dt);
 		void FixedUpdate(float fixedDt);
 		void Render() const;
 		
 		void SetTexture(const std::string& filename);
-		void SetPosition(float x, float y);
 
-		void Destroy() { m_IsDestroyed = true; }
-		bool IsDestroyed() const { return m_IsDestroyed; };
+		bool IsDestroyed() const { return m_IsDestroyed; }
+
+
+		bool HasParent() const { return m_parent != nullptr; }
+		GameObject* GetParent() const { return m_parent; }
+		const std::vector<GameObject*>& GetChildren() const { return m_children; }
+
+		void SetParent(GameObject* newParent, bool keepWorld = true);
+		void DetachFromParent(bool keepWorld = true) { SetParent(nullptr, keepWorld); }
+
+		void Destroy();
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args);
@@ -46,7 +63,7 @@ namespace dae
 		bool RemoveComponent();
 		
 
-		GameObject() = default;
+		GameObject();
 		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -59,11 +76,22 @@ namespace dae
 	{
 		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
+		if constexpr (std::is_same_v<T, TransformComponent>)
+		{
+			// Only one transform per GameObject
+			assert(m_TransformPtr == nullptr && "GameObject already has a TransformComponent");
+		}
+
 		auto component = std::make_unique<T>(std::forward<Args>(args)...);
 		component->SetOwner(this);
 
 		T& ref = *component;
 		m_components.emplace_back(std::move(component));
+
+		if constexpr (std::is_same_v<T, TransformComponent>)
+		{
+			m_TransformPtr = &ref;
+		}
 		return ref;
 	}
 	template<typename T>
