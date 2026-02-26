@@ -46,7 +46,7 @@ static void load()
 		go = std::make_unique<dae::GameObject>();
 		go->SetPosition(292.f, 20.f);
 		auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-		auto& txtComponent = go->AddComponent<dae::TextComponent>(font, SDL_Color{ 255, 255, 0, 255 });
+		auto& txtComponent = go->AddComponent<dae::TextComponent>(font.get(), SDL_Color{255, 255, 0, 255});
 		txtComponent.SetText("Programming 4 Assignment");
 		scene.Add(std::move(go));
 	
@@ -55,7 +55,7 @@ static void load()
 		go = std::make_unique<dae::GameObject>();
 		go->SetPosition(10.f, 10.f);
 		auto fpsFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
-		auto& fpsText = go->AddComponent<dae::TextComponent>(fpsFont, SDL_Color{ 255, 255, 255, 255 });
+		auto& fpsText = go->AddComponent<dae::TextComponent>(fpsFont.get(), SDL_Color{255, 255, 255, 255});
 		fpsText.SetText("0 FPS");
 		go->AddComponent<dae::FPSComponent>(0.01f);
 		scene.Add(std::move(go));

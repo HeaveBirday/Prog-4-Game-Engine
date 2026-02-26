@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <SDL3/SDL.h>
+#include "Texture2D.h"
 
 namespace dae
 {
@@ -12,8 +13,8 @@ namespace dae
     class TextComponent final : public Component
     {
     public:
-        TextComponent(std::shared_ptr<Font> font, SDL_Color color = { 255,255,255,255 });
-
+        TextComponent(GameObject* owner,Font* font, const SDL_Color& color = { 255,255,255,255 });
+     
         void Update(float) override;
         void Render() const override;
 
@@ -24,7 +25,7 @@ namespace dae
         bool m_needsUpdate{ true };
         std::string m_text{ "FPS: 0" };
         SDL_Color m_color{ 255,255,255,255 };
-        std::shared_ptr<Font> m_font{};
-        std::shared_ptr<Texture2D> m_textTexture{};
+        Font* m_font{};
+        std::unique_ptr<Texture2D> m_textTexture{};
     };
 }

@@ -8,8 +8,8 @@ namespace dae
     class FPSComponent final : public Component
     {
     public:
-        explicit FPSComponent(float refreshInterval = 0.25f)
-            : m_refreshInterval(refreshInterval)
+        explicit FPSComponent(GameObject* owner, float refreshInterval = 0.25f)
+            :Component(owner), m_refreshInterval(refreshInterval)
         {
         }
 

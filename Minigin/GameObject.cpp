@@ -50,7 +50,7 @@ void dae::GameObject::FixedUpdate(float fixedDt)
 		if (child && !child->IsDestroyed())
 			child->FixedUpdate(fixedDt);
 }
-//TO DO FIX LATER: RENDERER 
+//TODO FIX LATER: RENDERER 
 void dae::GameObject::Render() const
 {
 	for (const auto& c : m_components)

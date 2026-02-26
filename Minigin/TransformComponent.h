@@ -6,6 +6,7 @@ namespace dae
     class TransformComponent final : public Component
     {
     public:
+		explicit TransformComponent(GameObject* owner) : Component(owner) {}
         //Local position (relative to parent)
         void SetLocalPosition(float x, float y)
         {

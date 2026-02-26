@@ -8,9 +8,12 @@
 #include "TransformComponent.h"
 
 //THIS TextComponent IS PRETTY MUCH TextObject BUT MADE INTO A COMPONENT
-dae::TextComponent::TextComponent(std::shared_ptr<Font> font, SDL_Color color)
-    : m_color(color), m_font(std::move(font))
+dae::TextComponent::TextComponent(GameObject* owner,Font* font, const SDL_Color& color)
+    : Component(owner)
+    , m_font(font)
+    , m_color(color)
 {
+
 }
 
 void dae::TextComponent::Update(float)
@@ -24,7 +27,7 @@ void dae::TextComponent::Update(float)
     if (!texture) throw std::runtime_error(std::string("Create text texture failed: ") + SDL_GetError());
 
     SDL_DestroySurface(surf);
-    m_textTexture = std::make_shared<Texture2D>(texture);
+    m_textTexture = std::make_unique<Texture2D>(texture);
     m_needsUpdate = false;
 }
 

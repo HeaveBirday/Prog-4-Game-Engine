@@ -82,8 +82,8 @@ namespace dae
 			assert(m_TransformPtr == nullptr && "GameObject already has a TransformComponent");
 		}
 
-		auto component = std::make_unique<T>(std::forward<Args>(args)...);
-		component->SetOwner(this);
+		auto component = std::make_unique<T>(this, std::forward<Args>(args)...);
+	
 
 		T& ref = *component;
 		m_components.emplace_back(std::move(component));

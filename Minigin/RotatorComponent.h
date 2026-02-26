@@ -7,8 +7,8 @@ namespace dae
 	{
 	public:
 		// radius in pixels, speed in radians/sec
-		RotatorComponent(float radius, float speed, float startAngle = 0.f)
-			: m_radius(radius), m_speed(speed), m_angle(startAngle)
+		RotatorComponent(GameObject* owner, float radius, float speed, float startAngle = 0.f)
+			: Component(owner), m_radius(radius), m_speed(speed), m_angle(startAngle)
 		{
 		}
 
