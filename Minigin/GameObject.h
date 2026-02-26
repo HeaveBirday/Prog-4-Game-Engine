@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "Component.h"
-#include "TransformComponent.h"
+#include "Components/Component.h"
+#include "Components/TransformComponent.h"
 #include <algorithm>
 #include <vector>
 #include <type_traits>

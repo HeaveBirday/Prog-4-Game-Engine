@@ -26,8 +26,20 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Minigin/SceneManager.cpp
   
   Minigin/Texture2D.cpp
-  "Minigin/Transform.cpp"
- "Minigin/Component.h" "Minigin/TransformComponent.h" "Minigin/RenderComponent.h" "Minigin/RenderComponent.cpp" "Minigin/TextComponent.h" "Minigin/TextComponent.cpp" "Minigin/FPSComponent.h" "Minigin/FPSComponent.cpp" "Minigin/WiggleComponent.h" "Minigin/WiggleComponent.cpp" "Minigin/TransformComponent.cpp" "Minigin/RotatorComponent.h" "Minigin/RotatorComponent.cpp")
+ "Minigin/Components/Transform.cpp"
+ "Minigin/Components/Component.h" 
+ "Minigin/Components/TransformComponent.h" 
+ "Minigin/Components/RenderComponent.h"
+ "Minigin/Components/RenderComponent.cpp" 
+ "Minigin/Components/TextComponent.h"
+ "Minigin/Components/TextComponent.cpp"
+ "Minigin/Components/FPSComponent.h"
+ "Minigin/Components/FPSComponent.cpp"
+ "Minigin/Components/WiggleComponent.h"
+ "Minigin/Components/WiggleComponent.cpp" 
+ "Minigin/Components/TransformComponent.cpp"
+ "Minigin/Components/RotatorComponent.h"
+ "Minigin/Components/RotatorComponent.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -116,6 +128,13 @@ find_package(Steamworks QUIET)
 target_include_directories("${TARGET_NAME}" PUBLIC
   ${CMAKE_SOURCE_DIR}/Minigin/
   ${VLD_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/Minigin/
+  ${glm_SOURCE_DIR}
+  ${sdl3_SOURCE_DIR}/include
+  ${sdl3_image_SOURCE_DIR}/include
+  ${sdl3_ttf_SOURCE_DIR}/include
+  ${imgui_SOURCE_DIR}
+  ${VLD_INCLUDE_DIR}
 )
 
 target_link_libraries("${TARGET_NAME}" PUBLIC
@@ -123,6 +142,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   SDL3_ttf::SDL3_ttf
   glm::glm
   ${VLD_LIBRARIES}
+
 )
 
 if(MSVC)
@@ -236,3 +256,27 @@ else()
     COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/Data" "$<TARGET_FILE_DIR:${TARGET_NAME}>/Data"
   )
 endif()
+
+# Dear ImGui
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui
+  GIT_TAG v1.92.5-docking
+  GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(imgui)
+
+add_library(imgui STATIC
+  ${imgui_SOURCE_DIR}/imgui.cpp
+  ${imgui_SOURCE_DIR}/imgui_draw.cpp
+  ${imgui_SOURCE_DIR}/imgui_tables.cpp
+  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+  ${imgui_SOURCE_DIR}/imgui_demo.cpp
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
+)
+
+target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
+target_link_libraries(imgui PUBLIC SDL3::SDL3)
+# enable c++20 features
+target_compile_features(imgui PUBLIC cxx_std_20)

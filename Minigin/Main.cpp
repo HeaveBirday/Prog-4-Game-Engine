@@ -11,12 +11,12 @@
 //#include "TextObject.h" not needed anymore since we are using TextComponent now
 #include "Scene.h"
 
-#include "TransformComponent.h"
-#include "RenderComponent.h"
-#include "TextComponent.h"
-#include "FPSComponent.h"
-#include "WiggleComponent.h"
-#include "RotatorComponent.h"
+#include "Components/TransformComponent.h"
+#include "Components/RenderComponent.h"
+#include "Components/TextComponent.h"
+#include "Components/FPSComponent.h"
+#include "Components/WiggleComponent.h"
+#include "Components/RotatorComponent.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
