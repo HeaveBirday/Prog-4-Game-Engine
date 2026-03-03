@@ -24,8 +24,8 @@ namespace dae
     private:
         bool m_needsUpdate{ true };
         std::string m_text{ "FPS: 0" };
-        SDL_Color m_color{ 255,255,255,255 };
         Font* m_font{};
+        SDL_Color m_color{ 255,255,255,255 };
         std::unique_ptr<Texture2D> m_textTexture{};
     };
 }
