@@ -16,6 +16,9 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 
+#include "ControllerInput.h"
+
+
 SDL_Window* g_window{};
 
 void LogSDLVersion(const std::string& message, int major, int minor, int patch)
@@ -111,6 +114,22 @@ void dae::Minigin::RunOneFrame()
 
 	if (dt > 0.25f) dt = 0.25f;
 
+	//static dae::ControllerInput controller{};
+	//controller.Update();
+
+	//if (controller.IsButtonPressed(dae::ControllerInput::Button::A))
+	//{
+	//	SDL_Log("A pressed");
+	//}
+
+	//if (controller.IsButtonReleased(dae::ControllerInput::Button::A))
+	//{
+	//	SDL_Log("A released");
+	//}
+	//if (controller.IsButtonHeld(dae::ControllerInput::Button::A))
+	//{
+	//	SDL_Log("A held");
+	//}
 	m_quit = !InputManager::GetInstance().ProcessInput();
 
 	m_Lag += dt;

@@ -18,6 +18,12 @@
 #include "Components/WiggleComponent.h"
 #include "Components/RotatorComponent.h"
 
+
+#include "InputManager.h"
+#include "ControllerInput.h"
+#include "PrintCommand.h"
+#include "MoveCommand.h"
+
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -84,6 +90,67 @@ static void load()
 		ballB->AddComponent<dae::RenderComponent>(ballTex);
 		ballB->AddComponent<dae::RotatorComponent>(60.f, -4.0f); // opposite direction
 		scene.Add(std::move(ballB));
+
+		dae::InputManager::GetInstance().BindCommand(
+			dae::ControllerInput::Button::A,
+			dae::InputManager::ButtonState::Pressed,
+			std::make_unique<PrintCommand>()
+		);
+
+		auto greenTankTexture = dae::ResourceManager::GetInstance().LoadTexture("GreenTank.png");
+		auto blueTankTexture = dae::ResourceManager::GetInstance().LoadTexture("BlueTank.png");
+
+		go = std::make_unique<dae::GameObject>();
+		go->SetPosition(200.f, 200.f);
+		go->AddComponent<dae::RenderComponent>(greenTankTexture);
+		auto* greenTankPtr = go.get();
+		scene.Add(std::move(go));
+
+		go = std::make_unique<dae::GameObject>();
+		go->SetPosition(400.f, 200.f);
+		go->AddComponent<dae::RenderComponent>(blueTankTexture);
+		auto* blueTankPtr = go.get();
+		scene.Add(std::move(go));
+
+
+		const float controllerSpeed = 4.f;
+		const float keyboardSpeed = 2.f;
+		auto& input = dae::InputManager::GetInstance();
+
+		input.BindCommand(SDLK_W,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(greenTankPtr, MoveCommand::Direction::Up, keyboardSpeed));
+
+		input.BindCommand(SDLK_S,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(greenTankPtr, MoveCommand::Direction::Down, keyboardSpeed));
+
+		input.BindCommand(SDLK_A,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(greenTankPtr, MoveCommand::Direction::Left, keyboardSpeed));
+
+		input.BindCommand(SDLK_D,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(greenTankPtr, MoveCommand::Direction::Right, keyboardSpeed));
+
+		//Controller bindings for blue tank
+		input.BindCommand(dae::ControllerInput::Button::DPadUp,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(blueTankPtr, MoveCommand::Direction::Up, controllerSpeed));
+
+		input.BindCommand(dae::ControllerInput::Button::DPadDown,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(blueTankPtr, MoveCommand::Direction::Down, controllerSpeed));
+
+		input.BindCommand(dae::ControllerInput::Button::DPadLeft,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(blueTankPtr, MoveCommand::Direction::Left, controllerSpeed));
+
+		input.BindCommand(dae::ControllerInput::Button::DPadRight,
+			dae::InputManager::ButtonState::Held,
+			std::make_unique<MoveCommand>(blueTankPtr, MoveCommand::Direction::Right, controllerSpeed));
+
+
 }
 
 int main(int, char*[]) 

@@ -23,18 +23,17 @@ void dae::ControllerInput::Update()
 	buttonsReleasedThisFrame = buttonChanges & (~currentState.Gamepad.wButtons);
 }
 
-bool dae::ControllerInput::IsButtonPressed([[maybe_unused]] int controllerIndex, Button button) const
+bool dae::ControllerInput::IsButtonPressed(Button button) const
 {
-	return  buttonsPressedThisFrame & GetButtonFlag(button);
-
+	return (buttonsPressedThisFrame & GetButtonFlag(button)) != 0;
 }
 
-bool dae::ControllerInput::IsButtonHeld([[maybe_unused]] int controllerIndex, Button button) const
+bool dae::ControllerInput::IsButtonHeld( Button button) const
 {
 	return (currentState.Gamepad.wButtons & GetButtonFlag(button)) != 0;
 }
 
-bool dae::ControllerInput::IsButtonReleased([[maybe_unused]] int controllerIndex, Button button) const
+bool dae::ControllerInput::IsButtonReleased( Button button) const
 {
 	return (buttonsReleasedThisFrame & GetButtonFlag(button)) != 0;
 }

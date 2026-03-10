@@ -1,3 +1,5 @@
+#pragma once	
+
 #include "windows.h"
 #include "XInput.h"
 
@@ -26,9 +28,9 @@ namespace dae
 		ControllerInput();
 		~ControllerInput();
 		void Update();
-		bool IsButtonPressed(int controllerIndex, Button button) const;
-		bool IsButtonHeld(int controllerIndex, Button button) const;
-		bool IsButtonReleased(int controllerIndex, Button button) const;
+		bool IsButtonPressed( Button button) const;
+		bool IsButtonHeld(Button button) const;
+		bool IsButtonReleased(Button button) const;
 		
 		
 	private:
