@@ -58,7 +58,7 @@ namespace dae
 
         float m_localX{ 0.f };
         float m_localY{ 0.f };
-
+		//TODO change pos with glm vectors instead of separate floats
         mutable float m_worldX{ 0.f };
         mutable float m_worldY{ 0.f };
         mutable bool  m_dirty{ true };

@@ -76,6 +76,7 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 	}
 
 	Renderer::GetInstance().Init(g_window);
+	InputManager::GetInstance().Init();
 	ResourceManager::GetInstance().Init(dataPath);
 }
 
