@@ -15,8 +15,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
-
-#include "ControllerInput.h"
+#include "EventManager.h"
 
 
 SDL_Window* g_window{};
@@ -113,23 +112,6 @@ void dae::Minigin::RunOneFrame()
 	lastTime = currentTime;
 
 	if (dt > 0.25f) dt = 0.25f;
-
-	//static dae::ControllerInput controller{};
-	//controller.Update();
-
-	//if (controller.IsButtonPressed(dae::ControllerInput::Button::A))
-	//{
-	//	SDL_Log("A pressed");
-	//}
-
-	//if (controller.IsButtonReleased(dae::ControllerInput::Button::A))
-	//{
-	//	SDL_Log("A released");
-	//}
-	//if (controller.IsButtonHeld(dae::ControllerInput::Button::A))
-	//{
-	//	SDL_Log("A held");
-	//}
 	m_quit = !InputManager::GetInstance().ProcessInput();
 
 	m_Lag += dt;
@@ -141,7 +123,10 @@ void dae::Minigin::RunOneFrame()
 	}	
 	SceneManager::GetInstance().Update(dt);
 
+	dae::EventManager::GetInstance().ProcessEvents();
+
 	Renderer::GetInstance().Render();
+
 
 	const auto frameEnd = clock::now();
 	float frameTime = std::chrono::duration<float>(frameEnd - frameStart).count();

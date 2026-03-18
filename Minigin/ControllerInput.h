@@ -1,7 +1,7 @@
 #pragma once	
 
-#include "windows.h"
-#include "XInput.h"
+
+#include <memory>
 
 namespace dae
 {
@@ -34,11 +34,9 @@ namespace dae
 		
 		
 	private:
-		WORD GetButtonFlag(Button button) const;
-		XINPUT_STATE currentState;
-		XINPUT_STATE previousState;
-		DWORD m_controllerIndex;
-		unsigned int buttonsPressedThisFrame;
-		unsigned int buttonsReleasedThisFrame;
+	
+
+		class Impl;
+		std::unique_ptr<Impl> pImpl;
 	};
 }

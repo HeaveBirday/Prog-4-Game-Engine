@@ -39,7 +39,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
  "Minigin/Components/WiggleComponent.cpp" 
  "Minigin/Components/TransformComponent.cpp"
  "Minigin/Components/RotatorComponent.h"
- "Minigin/Components/RotatorComponent.cpp" "Minigin/Benchmark.h" "Minigin/Benchmark.cpp" "Minigin/Command.h" "Minigin/ControllerInput.h" "Minigin/ControllerInput.cpp" "Minigin/PrintCommand.h" "Minigin/PrintCommand.cpp" "Minigin/MoveCommand.h" "Minigin/MoveCommand.cpp")
+ "Minigin/Components/RotatorComponent.cpp" "Minigin/Benchmark.h" "Minigin/Benchmark.cpp" "Minigin/Command.h" "Minigin/ControllerInput.h" "Minigin/ControllerInput.cpp" "Minigin/PrintCommand.h" "Minigin/PrintCommand.cpp" "Minigin/MoveCommand.h" "Minigin/MoveCommand.cpp" "Minigin/Event.h" "Minigin/IEventListener.h" "Minigin/EventManager.h" "Minigin/EventManager.cpp" "Minigin/DebugEventListener.h" "Minigin/Components/HealthComponent.h" "Minigin/Components/HealthComponent.cpp" "Minigin/LoseLifeCommand.h" "Minigin/LoseLifeCommand.cpp" "Minigin/Components/LivesDisplayComponent.h" "Minigin/Components/LivesDisplayComponent.cpp")
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_23)
@@ -132,7 +132,7 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
- "Minigin/Benchmark.h" "Minigin/Benchmark.cpp" "Minigin/Command.h" "Minigin/ControllerInput.h" "Minigin/ControllerInput.cpp" "Minigin/PrintCommand.h" "Minigin/PrintCommand.cpp" "Minigin/MoveCommand.h" "Minigin/MoveCommand.cpp")
+)
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
