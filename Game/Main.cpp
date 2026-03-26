@@ -21,9 +21,9 @@
 
 #include "InputManager.h"
 #include "ControllerInput.h"
-#include "PrintCommand.h"
-#include "MoveCommand.h"
-#include "LoseLifeCommand.h"
+#include "Commands/PrintCommand.h"
+#include "Commands/MoveCommand.h"
+#include "Commands/LoseLifeCommand.h"
 #include "Components/LivesDisplayComponent.h"
 
 #include "EventManager.h"

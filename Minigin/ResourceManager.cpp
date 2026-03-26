@@ -5,6 +5,7 @@
 #include "Texture2D.h"
 #include "Font.h"
 
+
 namespace fs = std::filesystem;
 
 void dae::ResourceManager::Init(const std::filesystem::path& dataPath)

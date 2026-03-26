@@ -25,8 +25,19 @@ void dae::LivesDisplayComponent::OnEvent(const Event& event)
     if (event.type == EventType::LivesChanged)
     {
         m_Lives = event.value;
+        SDL_Log("Event received: LivesChanged | playerId = %d | lives = %d", event.playerId, event.value);
+
         UpdateText();
     }
+
+    if (event.type == EventType::PlayerDied)
+    {
+        m_Lives = event.value;
+        SDL_Log("Event received: PlayerDied | playerId = %d", event.playerId);
+
+        UpdateText();
+    }
+
 }
 
 void dae::LivesDisplayComponent::UpdateText()

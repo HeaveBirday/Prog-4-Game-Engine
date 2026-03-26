@@ -13,10 +13,11 @@
 #include "Minigin.h"
 #include "InputManager.h"
 #include "SceneManager.h"
-#include "Renderer.h"
+#include <Renderer.h>
 #include "ResourceManager.h"
 #include "EventManager.h"
-
+#include <chrono>
+#include <filesystem>
 
 SDL_Window* g_window{};
 

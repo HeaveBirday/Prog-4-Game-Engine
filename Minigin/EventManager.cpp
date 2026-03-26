@@ -14,6 +14,7 @@ void dae::EventManager::AddListener(IEventListener* listener)
 
 void dae::EventManager::RemoveListener(IEventListener* listener)
 {
+	if (m_Listeners.empty() || !listener) return;
     auto it = std::remove(m_Listeners.begin(), m_Listeners.end(), listener);
     m_Listeners.erase(it, m_Listeners.end());
 }

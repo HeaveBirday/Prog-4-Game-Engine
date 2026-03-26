@@ -13,12 +13,12 @@ else()
   set(TARGET_PARAM WIN32)
 endif()
 
-# list source files here
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Font.cpp
+set(ENGINE_NAME ENGINE)
+
+add_library(${ENGINE_NAME} STATIC
+Minigin/Font.cpp
   Minigin/GameObject.cpp
   Minigin/InputManager.cpp
-  Minigin/Main.cpp
   Minigin/Minigin.cpp
   Minigin/Renderer.cpp
   Minigin/ResourceManager.cpp
@@ -39,10 +39,43 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
  "Minigin/Components/WiggleComponent.cpp" 
  "Minigin/Components/TransformComponent.cpp"
  "Minigin/Components/RotatorComponent.h"
- "Minigin/Components/RotatorComponent.cpp" "Minigin/Benchmark.h" "Minigin/Benchmark.cpp" "Minigin/Command.h" "Minigin/ControllerInput.h" "Minigin/ControllerInput.cpp" "Minigin/PrintCommand.h" "Minigin/PrintCommand.cpp" "Minigin/MoveCommand.h" "Minigin/MoveCommand.cpp" "Minigin/Event.h" "Minigin/IEventListener.h" "Minigin/EventManager.h" "Minigin/EventManager.cpp" "Minigin/DebugEventListener.h" "Minigin/Components/HealthComponent.h" "Minigin/Components/HealthComponent.cpp" "Minigin/LoseLifeCommand.h" "Minigin/LoseLifeCommand.cpp" "Minigin/Components/LivesDisplayComponent.h" "Minigin/Components/LivesDisplayComponent.cpp")
+ "Minigin/Components/RotatorComponent.cpp" 
+ "Minigin/Benchmark.h" 
+ "Minigin/Benchmark.cpp" 
+ "Minigin/ControllerInput.h" 
+ "Minigin/ControllerInput.cpp"
+ "Minigin/Event.h" 
+ "Minigin/IEventListener.h"
+ "Minigin/EventManager.h" 
+ "Minigin/EventManager.cpp" 
+ "Minigin/DebugEventListener.h"
+ "Minigin/Components/HealthComponent.h"
+ "Minigin/Components/HealthComponent.cpp" 
+ "Minigin/Components/LivesDisplayComponent.h"
+ "Minigin/Components/LivesDisplayComponent.cpp"
+
+
+ "Minigin/Commands/PrintCommand.cpp"
+ "Minigin/Commands/MoveCommand.cpp"
+ "Minigin/Commands/LoseLifeCommand.cpp"
+)
+
+
+# list source files here
+add_executable(${TARGET_NAME} ${TARGET_PARAM}
+    "Game/Main.cpp"
+)
+
+#What Directories will be included and be visible in the libraries 
+target_include_directories(${ENGINE_NAME} 
+    PUBLIC ${CMAKE_SOURCE_DIR}/Minigin/
+)
+
+
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_23)
+target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_23)
 
 include(FetchContent)
 # add glm
@@ -115,29 +148,7 @@ if(NOT SDL3_ttf_FOUND)
     FetchContent_MakeAvailable(SDL3_ttf)
   endif()
 endif()
-# Dear ImGui
-FetchContent_Declare(
-  imgui
-  GIT_REPOSITORY https://github.com/ocornut/imgui
-  GIT_TAG v1.92.5-docking
-  GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(imgui)
 
-add_library(imgui STATIC
-  ${imgui_SOURCE_DIR}/imgui.cpp
-  ${imgui_SOURCE_DIR}/imgui_draw.cpp
-  ${imgui_SOURCE_DIR}/imgui_tables.cpp
-  ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-  ${imgui_SOURCE_DIR}/imgui_demo.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
-)
-
-target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
-target_link_libraries(imgui PUBLIC SDL3::SDL3)
-# enable c++20 features
-target_compile_features(imgui PUBLIC cxx_std_20)
 
 
 
@@ -151,20 +162,31 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
 target_include_directories("${TARGET_NAME}" PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/
-  ${VLD_INCLUDE_DIR}
-  ${sdl3_SOURCE_DIR}/include
-  ${sdl3_image_SOURCE_DIR}/include
-  ${sdl3_ttf_SOURCE_DIR}/include
-  ${imgui_SOURCE_DIR}
+    SDL3::SDL3 
+    SDL3_ttf::SDL3_ttf
+
   ${VLD_INCLUDE_DIR}
 )
 
 target_link_libraries("${TARGET_NAME}" PUBLIC
+  "${ENGINE_NAME}"
+    SDL3::SDL3 
+    SDL3_ttf::SDL3_ttf
+
+  PUBLIC ${VLD_LIBRARIES}
+)
+
+
+target_include_directories("${ENGINE_NAME}" PUBLIC
+    SDL3::SDL3 
+    SDL3_ttf::SDL3_ttf
+
+  ${VLD_INCLUDE_DIR}
+)
+target_link_libraries("${ENGINE_NAME}" PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
   glm::glm
-  imgui
 
   ${VLD_LIBRARIES}
   xinput
@@ -173,8 +195,10 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
 if(MSVC)
   # compile at warning level 4 + treat warnings as errors
   target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
+  target_compile_options(${ENGINE_NAME} PRIVATE /W4 /WX)
 else()
   target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -Werror)
+   target_compile_options(${ENGINE_NAME} PRIVATE -Wall -Wextra -Werror)
 endif()
 
 if(EMSCRIPTEN)

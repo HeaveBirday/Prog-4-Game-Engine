@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <map>
-#include "Command.h"
+#include "Commands/Command.h"
 #include "ControllerInput.h"
 namespace dae
 {

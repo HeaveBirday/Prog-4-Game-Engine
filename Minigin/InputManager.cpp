@@ -1,7 +1,5 @@
 #include <SDL3/SDL.h>
 #include "InputManager.h"
-#include <backends/imgui_impl_sdl3.h>
-
 
 
 void dae::InputManager::Init()
@@ -44,8 +42,6 @@ bool dae::InputManager::ProcessInput()
 		{
 		
 		}
-		//process event for IMGUI
-		ImGui_ImplSDL3_ProcessEvent(&e);
 	}
 
 	for (const auto& [key, command] : m_KeyboardBindings)
