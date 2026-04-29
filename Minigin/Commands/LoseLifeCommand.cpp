@@ -7,7 +7,7 @@ LoseLifeCommand::LoseLifeCommand(dae::GameObject* playerObject)
 {
 }
 
-void LoseLifeCommand::Execute()
+void LoseLifeCommand::Execute(float)
 {
     if (!m_PlayerObject) return;
 

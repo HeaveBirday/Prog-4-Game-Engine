@@ -1,29 +1,22 @@
 #pragma once
 #include "Command.h"
-#include "GameObject.h"
+#include <glm/glm.hpp>
+#include "Components/VelocityComponent.h"
 
 
 class MoveCommand final : public Command
 {
 public:
-enum class Direction
-{
-    Up,
-    Down,
-    Left,
-    Right
-};
-    MoveCommand(dae::GameObject* gameObject, Direction direction, float speed)
-        : m_pGameObject(gameObject),
-		m_Direction(direction),
-		m_Speed(speed)
-    {
+
+    MoveCommand(dae::VelocityComponent& velComponent, glm::vec2 dirVector)
+        : m_VelocityComponent(velComponent),
+		m_Direction(dirVector)
+    {   
     }
    
-    void Execute() override;
+    void Execute(float deltaTime) override;
 
 private:
-    dae::GameObject* m_pGameObject{};
-    Direction m_Direction{};
-    float m_Speed;
+    dae::VelocityComponent& m_VelocityComponent;
+	glm::vec2 m_Direction;
 };

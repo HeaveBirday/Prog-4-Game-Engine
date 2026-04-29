@@ -17,13 +17,13 @@ void dae::HealthComponent::LoseLife()
     --m_Lives;
 
     EventManager::GetInstance().QueueEvent(
-        Event{ EventType::LivesChanged, m_PlayerId, m_Lives }
+        Event{ make_sdbm_hash("PlayerDied"), m_PlayerId, m_Lives}
     );
 
     if (m_Lives <= 0)
     {
         EventManager::GetInstance().QueueEvent(
-            Event{ EventType::PlayerDied, m_PlayerId, 0 }
+            Event{ make_sdbm_hash("PlayerDied"), m_PlayerId, 0 }
         );
     }
 }

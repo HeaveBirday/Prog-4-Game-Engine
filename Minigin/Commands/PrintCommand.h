@@ -5,7 +5,7 @@
 class PrintCommand final : public Command
 {
 public:
-	void Execute() override
+	void Execute(float ) override
 	{
 		SDL_Log("Command executed!");
 	}

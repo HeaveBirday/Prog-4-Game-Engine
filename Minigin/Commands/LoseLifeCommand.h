@@ -10,7 +10,7 @@ class LoseLifeCommand final : public Command
 {
 public:
     explicit LoseLifeCommand(dae::GameObject* playerObject);
-    void Execute() override;
+    void Execute(float deltaTime) override;
 
 private:
     dae::GameObject* m_PlayerObject{};

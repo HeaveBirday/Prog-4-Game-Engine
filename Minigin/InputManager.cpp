@@ -7,7 +7,7 @@ void dae::InputManager::Init()
 	m_KeyboardState = SDL_GetKeyboardState(NULL);
 	m_Controllers.push_back(std::make_unique<ControllerInput>());
 }
-bool dae::InputManager::ProcessInput()
+bool dae::InputManager::ProcessInput(float deltaTime)
 {
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
@@ -22,7 +22,7 @@ bool dae::InputManager::ProcessInput()
 			{
 				if (key.first == e.key.key && key.second == ButtonState::Pressed)
 				{
-					m_KeyboardBindings[key]->Execute();
+					m_KeyboardBindings[key]->Execute(deltaTime);
 				}
 			}
 
@@ -33,7 +33,7 @@ bool dae::InputManager::ProcessInput()
 			{
 				if (key.first == e.key.key && key.second == ButtonState::Released)
 				{
-					m_KeyboardBindings[key]->Execute();
+					m_KeyboardBindings[key]->Execute(deltaTime);
 				}
 			}
 		}
@@ -47,7 +47,7 @@ bool dae::InputManager::ProcessInput()
 	for (const auto& [key, command] : m_KeyboardBindings)
 	{
 		if (m_KeyboardState[SDL_GetScancodeFromKey(key.first, NULL)] && key.second == ButtonState::Held) 
-			command.get()->Execute();
+			command.get()->Execute(deltaTime);
 	}
 
 	for (auto& controller : m_Controllers)
@@ -59,15 +59,15 @@ bool dae::InputManager::ProcessInput()
 	{
 		if (binding.second == ButtonState::Pressed && m_Controllers[0]->IsButtonPressed(binding.first))
 		{
-			command->Execute();
+			command->Execute(deltaTime);
 		}
 		if (binding.second == ButtonState::Held && m_Controllers[0]->IsButtonHeld(binding.first))
 		{
-			command->Execute();
+			command->Execute(deltaTime);
 		}
 		if (binding.second == ButtonState::Released && m_Controllers[0]->IsButtonReleased(binding.first))
 		{
-			command->Execute();
+			command->Execute(deltaTime);
 		}
 	}
 	return true;

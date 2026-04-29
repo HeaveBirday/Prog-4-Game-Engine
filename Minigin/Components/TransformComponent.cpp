@@ -1,7 +1,13 @@
 #include "TransformComponent.h"
+#include "TransformComponent.h"
 #include "GameObject.h" 
 
+
 void dae::TransformComponent::SetWorldPosition(float x, float y)
+{
+	SetWorldPosition(glm::vec2(x, y));
+}
+void dae::TransformComponent::SetWorldPosition(glm::vec2 pos)
 {
     // Convert world to local using current parent if existing
     const auto* parent = GetOwner().GetParent();
@@ -9,19 +15,20 @@ void dae::TransformComponent::SetWorldPosition(float x, float y)
     if (parent)
     {
         auto* parentTr = parent->GetTransform();
-        const float px = parentTr->GetWorldX();
-        const float py = parentTr->GetWorldY();
-        m_localX = x - px;
-        m_localY = y - py;
+
+        const glm::vec2 parentPos = parentTr->GetWorldPosition();
+       
+
+        m_LocalPos = parentPos;
     }
     else
     {
-        m_localX = x;
-        m_localY = y;
+		m_LocalPos = pos;
     }
 
     MarkDirty();
 }
+
 
 void dae::TransformComponent::MarkDirty() const
 {
@@ -43,13 +50,12 @@ void dae::TransformComponent::UpdateWorldIfDirty() const
     if (parent)
     {
         auto* parentTr = parent->GetTransform();
-        m_worldX = parentTr->GetWorldX() + m_localX;
-        m_worldY = parentTr->GetWorldY() + m_localY;
+        m_WorldPos = parentTr->GetWorldPosition() + m_LocalPos;
+    
     }
     else
     {
-        m_worldX = m_localX;
-        m_worldY = m_localY;
+        m_WorldPos = m_LocalPos;
     }
 
     m_dirty = false;

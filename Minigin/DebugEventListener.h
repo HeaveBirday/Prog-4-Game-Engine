@@ -10,18 +10,18 @@ namespace dae
     public:
         void OnEvent(const Event& event) override
         {
-            switch (event.type)
+            switch (event.id)
             {
-            case EventType::PlayerDied:
+            case make_sdbm_hash("PlayerDied"):
                 
                 SDL_Log("Event received: PlayerDied | playerId = %d", event.playerId);
 
                 break;
-            case EventType::LivesChanged:
+            case make_sdbm_hash("LivesChanged"):
                 SDL_Log("Event received: LivesChanged | playerId = %d | lives = %d", event.playerId, event.value);
 
                 break;
-            case EventType::ScoreChanged:
+            case make_sdbm_hash("ScoreChanged"):
                 SDL_Log("Event received: ScoreChanged | playerId = %d | score = %d", event.playerId, event.value);
 
                 break;

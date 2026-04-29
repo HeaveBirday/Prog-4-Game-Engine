@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include <glm/glm.hpp>
 
 dae::GameObject::GameObject()
 {
@@ -65,11 +66,14 @@ void dae::GameObject::SetTexture(const std::string& filename)
 {
 	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
 }
-
 void dae::GameObject::SetPosition(float x, float y)
 {
+	SetPosition(glm::vec2(x, y));
+}
+void dae::GameObject::SetPosition(glm::vec2 vectorPos)
+{
 	if (m_TransformPtr)
-		m_TransformPtr->SetPosition(x, y);
+		m_TransformPtr->SetPosition(vectorPos);
 }
 void dae::GameObject::AddChild_Internally(GameObject* child)
 {

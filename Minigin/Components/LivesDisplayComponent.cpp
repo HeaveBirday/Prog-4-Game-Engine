@@ -22,7 +22,7 @@ void dae::LivesDisplayComponent::OnEvent(const Event& event)
     if (event.playerId != m_PlayerId)
         return;
 
-    if (event.type == EventType::LivesChanged)
+    if (event.id == make_sdbm_hash("LivesChanged"))
     {
         m_Lives = event.value;
         SDL_Log("Event received: LivesChanged | playerId = %d | lives = %d", event.playerId, event.value);
@@ -30,7 +30,7 @@ void dae::LivesDisplayComponent::OnEvent(const Event& event)
         UpdateText();
     }
 
-    if (event.type == EventType::PlayerDied)
+    if (event.id == make_sdbm_hash("PlayerDied"))
     {
         m_Lives = event.value;
         SDL_Log("Event received: PlayerDied | playerId = %d", event.playerId);

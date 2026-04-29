@@ -113,7 +113,7 @@ void dae::Minigin::RunOneFrame()
 	lastTime = currentTime;
 
 	if (dt > 0.25f) dt = 0.25f;
-	m_quit = !InputManager::GetInstance().ProcessInput();
+	m_quit = !InputManager::GetInstance().ProcessInput(dt);
 
 	m_Lag += dt;
 	while (m_Lag >= m_FixedTimeStep)

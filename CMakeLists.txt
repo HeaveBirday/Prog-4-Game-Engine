@@ -58,13 +58,13 @@ Minigin/Font.cpp
  "Minigin/Commands/PrintCommand.cpp"
  "Minigin/Commands/MoveCommand.cpp"
  "Minigin/Commands/LoseLifeCommand.cpp"
-)
+ "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp")
 
 
 # list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
     "Game/Main.cpp"
-)
+ "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp")
 
 #What Directories will be included and be visible in the libraries 
 target_include_directories(${ENGINE_NAME} 

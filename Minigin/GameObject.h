@@ -7,6 +7,7 @@
 #include <vector>
 #include <type_traits>
 #include <cassert>
+#include <concepts>
 
 namespace dae
 {
@@ -31,6 +32,7 @@ namespace dae
 
 		TransformComponent* GetTransform() const { return m_TransformPtr; }
 		void SetPosition(float x, float y);
+		void SetPosition(glm::vec2 vectorPos);
 
 		void Update(float dt);
 		void FixedUpdate(float fixedDt);
@@ -50,7 +52,7 @@ namespace dae
 
 		void Destroy();
 
-		template<typename T, typename... Args>
+		template<std::derived_from<Component> T, typename... Args> requires std::constructible_from<T, GameObject*, Args...>
 		T& AddComponent(Args&&... args);
 
 		template<typename T>
@@ -71,7 +73,7 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	};
-	template<typename T, typename... Args>
+	template<std::derived_from<Component> T, typename... Args> requires std::constructible_from<T, GameObject*, Args...>
 	T& GameObject::AddComponent(Args&&... args)
 	{
 		static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
