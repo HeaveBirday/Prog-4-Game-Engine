@@ -19,6 +19,7 @@
 #include "Components/HealthComponent.h"
 #include "Components/VelocityComponent.h"
 #include "Components/CollisionComponent.h"
+#include "Component/ShooterComponent.h"
 
 #include "InputManager.h"
 #include "ControllerInput.h"
@@ -26,6 +27,8 @@
 #include "Commands/MoveCommand.h"
 #include "Commands/LoseLifeCommand.h"
 #include "Components/LivesDisplayComponent.h"
+#include "Commands/ShootBulletCommand.h"
+
 
 #include "EventManager.h"
 #include "DebugEventListener.h"
@@ -50,10 +53,10 @@ static void load()
 	//Background
 
 	auto go = std::make_unique<dae::GameObject>();
-	go->SetPosition(0.f, 0.f);
-	auto tex = dae::ResourceManager::GetInstance().LoadTexture("background.png");
-	go->AddComponent<dae::RenderComponent>(tex);
-	scene.Add(std::move(go));
+	//go->SetPosition(0.f, 0.f);
+	//auto tex = dae::ResourceManager::GetInstance().LoadTexture("background.png");
+	//go->AddComponent<dae::RenderComponent>(tex);
+	//scene.Add(std::move(go));
 
 	////Logo
 	//
@@ -129,6 +132,7 @@ static void load()
 		go->AddComponent<dae::HealthComponent>(0, 3);
 		auto& velocityComponent = go->AddComponent<dae::VelocityComponent>(keyboardSpeed);
 		go->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f });
+		go->AddComponent<dae::ShooterComponent>();
 		auto* greenTankPtr = go.get();
 		scene.Add(std::move(go));
 
@@ -137,23 +141,40 @@ static void load()
 		input.BindCommand(SDLK_W,
 			dae::InputManager::ButtonState::Held,
 			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,-1 }));
+		input.BindCommand(SDLK_W,
+			dae::InputManager::ButtonState::Released,
+			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
+
 
 		input.BindCommand(SDLK_S,
 			dae::InputManager::ButtonState::Held,
 			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,1 }));
+		input.BindCommand(SDLK_S,
+			dae::InputManager::ButtonState::Released,
+			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
 
 		input.BindCommand(SDLK_A,
 			dae::InputManager::ButtonState::Held,
 			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ -1,0 }));
+		input.BindCommand(SDLK_A,
+			dae::InputManager::ButtonState::Released,
+			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
 
 		input.BindCommand(SDLK_D,
 			dae::InputManager::ButtonState::Held,
 			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 1,0 }));
+		input.BindCommand(SDLK_D,
+			dae::InputManager::ButtonState::Released,
+			std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
 
 		//Lose life command for green tank
 		input.BindCommand(SDLK_SPACE,
 			dae::InputManager::ButtonState::Pressed,
-			std::make_unique<LoseLifeCommand>(greenTankPtr));
+			std::make_unique<dae::ShootBulletCommand>(greenTankPtr));
+			//std::make_unique<LoseLifeCommand>(greenTankPtr));
+		//Shoot command for green tank
+			
+		
 
 
 	}

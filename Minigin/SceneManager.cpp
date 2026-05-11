@@ -16,6 +16,11 @@ dae::Scene& dae::SceneManager::CreateScene()
 	return *m_scenes.back();
 }
 
+dae::Scene& dae::SceneManager::GetActiveScene()
+{
+	return *m_scenes.back();
+}
+
 void dae::SceneManager::Update(float dt)
 {
 	for(auto& scene : m_scenes)

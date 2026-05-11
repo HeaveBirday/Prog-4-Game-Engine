@@ -12,6 +12,8 @@ namespace dae
 	{
 	public:
 		Scene& CreateScene();
+		Scene& GetActiveScene();
+
 		void FixedUpdate(float fixedDt);
 		void Update(float dt);
 		void Render();

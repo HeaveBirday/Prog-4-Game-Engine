@@ -64,12 +64,14 @@ Minigin/Font.cpp
 # list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
     "Game/Main.cpp"
- "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp")
+ "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp" "Game/Component/BulletComponent.h" "Game/Component/BulletComponent.cpp" "Game/Commands/ShootBulletCommand.h" "Game/Commands/ShootBulletCommand.cpp" "Game/Component/ShooterComponent.h" "Game/Component/ShooterComponent.cpp")
 
 #What Directories will be included and be visible in the libraries 
 target_include_directories(${ENGINE_NAME} 
     PUBLIC ${CMAKE_SOURCE_DIR}/Minigin/
 )
+
+
 
 
 

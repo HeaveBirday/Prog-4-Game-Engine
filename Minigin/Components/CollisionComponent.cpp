@@ -25,7 +25,7 @@ void dae::CollisionComponent::Update(float)
 		}
 		else
 		{
-			SDL_Log("No Collision");
+			//SDL_Log("No Collision");
 		}
 		//broadcast it as a subject not a whole event manager, limited to just game object that there was a collision
 		// OPTION: My component gets notified as a method that it was collided with and then it can handle it there,

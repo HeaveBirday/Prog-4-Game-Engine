@@ -14,7 +14,15 @@ namespace dae
 
         void Update(float dt) override;
 
-        void SetDirection(glm::vec2 dir) { m_Direction = glm::normalize(dir); }
+        void SetDirection(glm::vec2 dir) 
+        {
+			if (dir == glm::vec2{ 0.f, 0.f })
+            {
+                m_Direction = dir;
+                return;
+            }
+            m_Direction = glm::normalize(dir); 
+        }
 
     private:
         float m_Speed;
