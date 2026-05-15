@@ -7,7 +7,9 @@
 #include "Minigin.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-//#include "TextObject.h" not needed anymore since we are using TextComponent now
+#include "ServiceLocator.h"
+#include "SDLSoundSystem.h"
+#include "SoundIds.h"
 #include "Scene.h"
 
 #include "Components/TransformComponent.h"
@@ -45,10 +47,20 @@ namespace dae
 		constexpr EventId LivesChanged = make_sdbm_hash("LivesChanged");
 		constexpr EventId ScoreChanged = make_sdbm_hash("ScoreChanged");
 	}
+	namespace SoundIds
+	{
+		
+	}
 }
+
 
 static void load()
 {
+	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
+
+	auto& soundSystem = dae::ServiceLocator::GetSoundSystem();
+	soundSystem.LoadSound(dae::SoundIds::GunShot, dae::ResourceManager::GetInstance().GetFullPath("GunShot.wav"));
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	//Background
 

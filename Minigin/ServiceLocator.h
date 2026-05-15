@@ -9,7 +9,7 @@ namespace dae
     public:
         static SoundSystem& GetSoundSystem();
         static void RegisterSoundSystem(std::unique_ptr<SoundSystem> soundSystem);
-
+        static void DestroySoundSystem();
     private:
         static std::unique_ptr<SoundSystem> m_SoundSystem;
     };

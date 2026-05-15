@@ -18,4 +18,9 @@ namespace dae
         else
             m_SoundSystem = std::move(soundSystem);
     }
+    void ServiceLocator::DestroySoundSystem()
+    {
+        m_SoundSystem.reset();
+    }
 }
+

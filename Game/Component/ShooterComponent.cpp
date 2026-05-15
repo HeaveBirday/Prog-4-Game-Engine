@@ -7,13 +7,15 @@
 #include "BulletComponent.h"
 #include <Texture2D.h>
 #include <Components/CollisionComponent.h>
-
+#include <ServiceLocator.h>
+#include "../SoundIds.h"
 void dae::ShooterComponent::Update(float)
 {
 }
 
 void dae::ShooterComponent::Shoot()
 {
+
 	auto bulletGameObject = std::make_unique<GameObject>();
 	auto transform = GetOwner().GetTransform();
 	
@@ -29,5 +31,6 @@ void dae::ShooterComponent::Shoot()
 	
 	auto& scene = SceneManager::GetInstance().GetActiveScene();
 	scene.Add(std::move(bulletGameObject));
+	dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::GunShot, 1.0f);
 
 }

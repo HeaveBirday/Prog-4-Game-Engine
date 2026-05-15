@@ -58,13 +58,37 @@ Minigin/Font.cpp
  "Minigin/Commands/PrintCommand.cpp"
  "Minigin/Commands/MoveCommand.cpp"
  "Minigin/Commands/LoseLifeCommand.cpp"
- "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp")
+ "Minigin/Components/VelocityComponent.h"
+ "Minigin/Components/VelocityComponent.cpp" 
+ "Minigin/Components/CollisionComponent.h"
+ "Minigin/Components/CollisionComponent.cpp" 
+ "Minigin/SoundSystem.h"
+ "Minigin/NullSoundSystem.h" 
+ "Minigin/ServiceLocator.h" 
+ "Minigin/ServiceLocator.cpp"
+ "Minigin/SDLSoundSystem.h" 
+ "Minigin/SDLSoundSystem.cpp")
 
 
 # list source files here
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
     "Game/Main.cpp"
- "Minigin/Components/VelocityComponent.h" "Minigin/Components/VelocityComponent.cpp" "Minigin/Components/CollisionComponent.h" "Minigin/Components/CollisionComponent.cpp" "Minigin/SoundSystem.h" "Minigin/NullSoundSystem.h" "Minigin/ServiceLocator.h" "Minigin/ServiceLocator.cpp" "Game/Component/BulletComponent.h" "Game/Component/BulletComponent.cpp" "Game/Commands/ShootBulletCommand.h" "Game/Commands/ShootBulletCommand.cpp" "Game/Component/ShooterComponent.h" "Game/Component/ShooterComponent.cpp")
+ "Minigin/Components/VelocityComponent.h"
+ "Minigin/Components/VelocityComponent.cpp" 
+ "Minigin/Components/CollisionComponent.h"
+ "Minigin/Components/CollisionComponent.cpp" 
+ "Minigin/SoundSystem.h"
+ "Minigin/NullSoundSystem.h" 
+ "Minigin/ServiceLocator.h" 
+ "Minigin/ServiceLocator.cpp" 
+ "Game/Component/BulletComponent.h" 
+ "Game/Component/BulletComponent.cpp"
+ "Game/Commands/ShootBulletCommand.h" 
+ "Game/Commands/ShootBulletCommand.cpp"
+ "Game/Component/ShooterComponent.h" 
+ "Game/Component/ShooterComponent.cpp"
+ "Minigin/SDLSoundSystem.h" 
+ "Minigin/SDLSoundSystem.cpp" "Game/SoundIds.h")
 
 #What Directories will be included and be visible in the libraries 
 target_include_directories(${ENGINE_NAME} 
@@ -151,7 +175,9 @@ if(NOT SDL3_ttf_FOUND)
   endif()
 endif()
 
-
+# Add SDL3_mixer
+set(SDL3_mixer_DIR "${CMAKE_SOURCE_DIR}/extern/SDL3_mixer-3.2.2/cmake")
+find_package(SDL3_mixer CONFIG REQUIRED)
 
 
 if (WIN32)
@@ -174,6 +200,7 @@ target_link_libraries("${TARGET_NAME}" PUBLIC
   "${ENGINE_NAME}"
     SDL3::SDL3 
     SDL3_ttf::SDL3_ttf
+    SDL3_mixer::SDL3_mixer
 
   PUBLIC ${VLD_LIBRARIES}
 )
@@ -188,6 +215,7 @@ target_include_directories("${ENGINE_NAME}" PUBLIC
 target_link_libraries("${ENGINE_NAME}" PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
+  SDL3_mixer::SDL3_mixer
   glm::glm
 
   ${VLD_LIBRARIES}
@@ -233,6 +261,7 @@ elseif(WIN32)
   set(SDL_RUNTIME_DLLS
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
+    SDL3_mixer::SDL3_mixer
   )
 
   foreach(dllTarget IN LISTS SDL_RUNTIME_DLLS)
