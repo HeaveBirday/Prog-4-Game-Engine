@@ -1,0 +1,14 @@
+#pragma once
+#include <memory>
+
+class GameState;
+class GameStateManager final
+{
+public: 
+	void SetState(std::unique_ptr<GameState> newState);
+
+	void HandleInput();
+	void Update(float deltaTime);
+private:
+	std::unique_ptr<GameState> m_CurrentState;
+};

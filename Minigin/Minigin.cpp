@@ -86,6 +86,9 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 dae::Minigin::~Minigin()
 {
+	
+
+
 	dae::ServiceLocator::DestroySoundSystem();
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);
@@ -93,9 +96,11 @@ dae::Minigin::~Minigin()
 	SDL_Quit();
 }
 
-void dae::Minigin::Run(const std::function<void()>& load)
+void dae::Minigin::Run(const std::function<void()>& load, const std::function<void(float)>& update)
 {
 	load();
+
+	m_UpdateCallback = update;
 #ifndef __EMSCRIPTEN__
 	while (!m_quit)
 		RunOneFrame();
@@ -116,6 +121,11 @@ void dae::Minigin::RunOneFrame()
 
 	if (dt > 0.25f) dt = 0.25f;
 	m_quit = !InputManager::GetInstance().ProcessInput(dt);
+
+	if (m_UpdateCallback)
+	{
+		m_UpdateCallback(dt);
+	}
 
 	m_Lag += dt;
 	while (m_Lag >= m_FixedTimeStep)

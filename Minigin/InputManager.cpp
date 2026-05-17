@@ -95,3 +95,9 @@ void dae::InputManager::UnbindCommand(SDL_Keycode key, ButtonState buttonState)
 	m_KeyboardBindings.erase(std::make_pair(key, buttonState));
 }
 
+void dae::InputManager::ClearCommands()
+{
+	m_KeyboardBindings.clear();
+	m_ControllerBindings.clear();
+}
+

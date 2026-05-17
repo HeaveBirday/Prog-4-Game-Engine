@@ -11,10 +11,11 @@ namespace dae
 		float m_Lag{};
 		const float m_FixedTimeStep{ 1.0f / 60.0f };
 
+		std::function<void(float)> m_UpdateCallback;
 	public:
 		explicit Minigin(const std::filesystem::path& dataPath);
 		~Minigin();
-		void Run(const std::function<void()>& load);
+		void Run(const std::function<void()>& load, const std::function<void(float)>& update);
 		void RunOneFrame();
 
 		Minigin(const Minigin& other) = delete;

@@ -104,6 +104,11 @@ namespace dae
 			{
 				std::lock_guard lock(m_Mutex);
 				m_IsRunning = false;
+
+				while (!m_SoundQueue.empty())
+				{
+					m_SoundQueue.pop();
+				}
 			}
 
 			m_ConditionVariable.notify_one();
@@ -119,18 +124,18 @@ namespace dae
 				MIX_SetTrackAudio(m_pTrack.get(), nullptr);
 			}
 
-			m_pTrack.reset();
 			m_Sounds.clear();
+			m_pTrack.reset();
 			m_pMixer.reset();
-
-			MIX_Quit();
 			SDL_QuitSubSystem(SDL_INIT_AUDIO);
+			MIX_Quit();
 			SDL_Log("SDLSoundSystem shutdown complete");
 		}
 		void Play(sound_id id, float volume)
 		{
 			{
 				std::lock_guard lock(m_Mutex);
+				if (!m_IsRunning) return;
 				m_SoundQueue.push({ id, volume });
 			}
 			m_ConditionVariable.notify_one();
@@ -189,23 +194,25 @@ namespace dae
 
 		void ThreadMain()
 		{
-			while (m_IsRunning)
+			while (true)
 			{
 				SoundRequest request{};
+
 				{
 					std::unique_lock lock(m_Mutex);
+
 					m_ConditionVariable.wait(lock, [this]
 						{
 							return !m_SoundQueue.empty() || !m_IsRunning;
 						});
-					if(!m_IsRunning && m_SoundQueue.empty())
-					{
+
+					if (!m_IsRunning)
 						return;
-					}
 
 					request = m_SoundQueue.front();
 					m_SoundQueue.pop();
 				}
+
 				PlaySoundInternal(request);
 			}
 		}

@@ -20,7 +20,8 @@ namespace dae
     }
     void ServiceLocator::DestroySoundSystem()
     {
-        m_SoundSystem.reset();
+        m_SoundSystem = std::make_unique<NullSoundSystem>();
+
     }
 }
 

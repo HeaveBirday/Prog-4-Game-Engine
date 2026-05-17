@@ -17,6 +17,7 @@ namespace dae
 		void FixedUpdate(float fixedDt);
 		void Update(float dt);
 		void Render();
+		void RemoveAll();
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

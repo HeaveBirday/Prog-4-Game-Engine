@@ -23,6 +23,7 @@ namespace dae
 		void BindCommand(ControllerInput::Button button, ButtonState buttonState, std::unique_ptr<Command> command);
 		void UnbindCommand(ControllerInput::Button button, ButtonState buttonState);
 		void UnbindCommand(SDL_Keycode key, ButtonState buttonState);
+		void ClearCommands();
 		void Init();
 	private:
 
