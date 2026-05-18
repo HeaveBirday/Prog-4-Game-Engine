@@ -11,9 +11,10 @@
 #include "Components/VelocityComponent.h"
 #include "Components/CollisionComponent.h"
 #include "../Component/ShooterComponent.h"
+#include "../Component/TankComponent.h"
 
 #include "InputManager.h"
-#include "Commands/MoveCommand.h"
+#include "../Commands/MoveCommand.h"
 #include "../Commands/ShootBulletCommand.h"
 
 #include <glm/glm.hpp>
@@ -41,30 +42,31 @@ void SinglePlayerState::OnEnter()
 
 	auto& velocityComponent = greenTank->AddComponent<dae::VelocityComponent>(keyboardSpeed);
 	greenTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f });
-	greenTank->AddComponent<dae::ShooterComponent>();
 
+	auto& tankComponent = greenTank->AddComponent<dae::TankComponent>(greenTankTexture->GetSize());
 	auto* greenTankPtr = greenTank.get();
+	greenTank->AddComponent<dae::ShooterComponent>();
 	scene.Add(std::move(greenTank));
 
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,-1 }));
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,-1 }));
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
 	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,1 }));
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,1 }));
 	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 	
 	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ -1,0 }));
+		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ -1,0 }));
 	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
+		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 0,0 }));
 
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 1,0 }));
+		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 1,0 }));
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent, glm::vec2{ 0,0 }));
+		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 0,0 }));
 
 	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Pressed,
 		std::make_unique<dae::ShootBulletCommand>(greenTankPtr));

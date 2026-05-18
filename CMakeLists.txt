@@ -56,7 +56,6 @@ Minigin/Font.cpp
 
 
  "Minigin/Commands/PrintCommand.cpp"
- "Minigin/Commands/MoveCommand.cpp"
  "Minigin/Commands/LoseLifeCommand.cpp"
  "Minigin/Components/VelocityComponent.h"
  "Minigin/Components/VelocityComponent.cpp" 
@@ -88,7 +87,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
  "Game/Component/ShooterComponent.h" 
  "Game/Component/ShooterComponent.cpp"
  "Minigin/SDLSoundSystem.h" 
- "Minigin/SDLSoundSystem.cpp" "Game/SoundIds.h" "Game/States/GameState.h" "Game/States/GameStateManager.h" "Game/States/GameStateManager.cpp" "Game/States/SinglePlayerState.h" "Game/States/SinglePlayerState.cpp" "Game/States/MainMenuState.h" "Game/States/MainMenuState.cpp")
+ "Minigin/SDLSoundSystem.cpp" "Game/SoundIds.h" "Game/States/GameState.h" "Game/States/GameStateManager.h" "Game/States/GameStateManager.cpp" "Game/States/SinglePlayerState.h" "Game/States/SinglePlayerState.cpp" "Game/States/MainMenuState.h" "Game/States/MainMenuState.cpp" "Game/States/CoopState.h" "Game/States/CoopState.cpp" "Game/States/VersusState.h" "Game/States/VersusState.cpp" "Game/Component/TankComponent.h" "Game/Component/TankComponent.cpp" "Game/Commands/MoveCommand.h" "Game/Commands/MoveCommand.cpp")
 
 #What Directories will be included and be visible in the libraries 
 target_include_directories(${ENGINE_NAME} 

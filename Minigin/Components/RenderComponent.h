@@ -17,6 +17,7 @@ namespace dae
 
         void Render() const override;
 
+
     private:
         std::shared_ptr<Texture2D> m_texture;
     };

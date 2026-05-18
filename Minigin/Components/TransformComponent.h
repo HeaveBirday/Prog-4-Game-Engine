@@ -59,14 +59,17 @@ namespace dae
             x = GetWorldX();
             y = GetWorldY();
         }
+		void SetRotation(float angle) { m_Rotation = angle; }
+		float GetRotation() const { return m_Rotation; }
+
     private:
         void MarkDirty() const;
 
         void UpdateWorldIfDirty() const;
 
 		glm::vec2 m_LocalPos{ 0.f, 0.f };
-		//TODO change pos with glm vectors instead of separate floats
 		mutable glm::vec2 m_WorldPos{ 0.f, 0.f };
         mutable bool  m_dirty{ true };
+        float m_Rotation{};
     };
 }
