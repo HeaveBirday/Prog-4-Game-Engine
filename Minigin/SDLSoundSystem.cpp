@@ -126,6 +126,7 @@ namespace dae
 
 			m_Sounds.clear();
 			m_pTrack.reset();
+			MIX_DestroyMixer(m_pMixer.release());
 			m_pMixer.reset();
 			MIX_Quit();
 			SDL_QuitSubSystem(SDL_INIT_AUDIO);
@@ -225,6 +226,7 @@ namespace dae
 		std::unordered_map<sound_id, AudioPtr> m_Sounds;
 		MixerPtr m_pMixer{};
 		TrackPtr m_pTrack{};
+		
 	};
 
 	SDLSoundSystem::SDLSoundSystem() : m_pImpl{ std::make_unique<Impl>() }

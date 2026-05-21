@@ -175,8 +175,24 @@ if(NOT SDL3_ttf_FOUND)
 endif()
 
 # Add SDL3_mixer
-set(SDL3_mixer_DIR "${CMAKE_SOURCE_DIR}/extern/SDL3_mixer-3.2.2/cmake")
-find_package(SDL3_mixer CONFIG REQUIRED)
+find_package(SDL3_mixer 3.2.2 CONFIG QUIET)
+
+if(NOT SDL3_mixer_FOUND)
+  if (WIN32)
+    FetchContent_Declare(
+      SDL3_mixer
+      URL https://www.libsdl.org/projects/SDL_mixer/release/SDL3_mixer-devel-3.2.2-VC.zip
+      DOWNLOAD_NO_PROGRESS ON
+      DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
+    )
+
+    FetchContent_MakeAvailable(SDL3_mixer)
+
+    list(PREPEND CMAKE_PREFIX_PATH "${sdl3_mixer_SOURCE_DIR}")
+
+    find_package(SDL3_mixer CONFIG REQUIRED)
+  endif()
+endif()
 
 
 if (WIN32)
