@@ -16,7 +16,7 @@
 #include "InputManager.h"
 #include "../Commands/MoveCommand.h"
 #include "../Commands/ShootBulletCommand.h"
-
+#include "../GameCollisionLayer.h"
 #include <glm/glm.hpp>
 
 void SinglePlayerState::OnEnter()
@@ -41,7 +41,7 @@ void SinglePlayerState::OnEnter()
 	greenTank->AddComponent<dae::HealthComponent>(0, 3);
 
 	auto& velocityComponent = greenTank->AddComponent<dae::VelocityComponent>(keyboardSpeed);
-	greenTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f });
+	greenTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f }, dae::GameCollisionLayers::Tank);
 
 	auto& tankComponent = greenTank->AddComponent<dae::TankComponent>(greenTankTexture->GetSize());
 	auto* greenTankPtr = greenTank.get();
@@ -71,7 +71,20 @@ void SinglePlayerState::OnEnter()
 	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Pressed,
 		std::make_unique<dae::ShootBulletCommand>(greenTankPtr));
 
-	
+
+	//Blue tank thingies for testing purposes
+	auto blueTankTexture = dae::ResourceManager::GetInstance().LoadTexture("BlueTank.png");
+	auto blueTank = std::make_unique<dae::GameObject>();
+	blueTank->SetPosition(400.f, 200.f);
+	blueTank->AddComponent<dae::RenderComponent>(blueTankTexture);
+	blueTank->AddComponent<dae::HealthComponent>(0, 3);
+
+	blueTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f }, dae::GameCollisionLayers::Tank);
+
+	blueTank->AddComponent<dae::TankComponent>(greenTankTexture->GetSize());
+	scene.Add(std::move(blueTank));
+
+
 
 }
 

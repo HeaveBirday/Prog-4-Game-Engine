@@ -10,6 +10,7 @@
 #include <ServiceLocator.h>
 #include "../SoundIds.h"
 #include "TankComponent.h"
+#include "../GameCollisionLayer.h"
 void dae::ShooterComponent::Update(float)
 {
 }
@@ -50,12 +51,12 @@ void dae::ShooterComponent::Shoot()
 		transform->GetY() + tankSize.y / 2.f
 	};
 	glm::vec2 bulletCenter{
-		tankCenter + bulletDirection * (tankSize.x / 2.f)};
+		tankCenter + bulletDirection * ((tankSize.x / 2.f) + (bulletSize.x / 2.f)) };
 	glm::vec2 bulletSpawnPos{
 		bulletCenter - bulletSize / 2.f
 	};
 	bulletGameObject->SetPosition(bulletSpawnPos);
-	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize());
+	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize(), dae::GameCollisionLayers::Bullet);
 
 	bulletGameObject->AddComponent<RenderComponent>(texture);
 	bulletGameObject->AddComponent<VelocityComponent>(200.f);

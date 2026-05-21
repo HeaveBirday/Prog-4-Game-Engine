@@ -10,6 +10,7 @@
 #include "ServiceLocator.h"
 #include "SDLSoundSystem.h"
 #include "SoundIds.h"
+#include "GameCollisionLayer.h"
 #include "Scene.h"
 #include "States/GameStateManager.h"
 #include "States/SinglePlayerState.h"
@@ -41,20 +42,25 @@
 #include <filesystem>
 
 namespace fs = std::filesystem;
-namespace dae
-{
-	namespace EventIds
-	{
-		constexpr EventId Dance = make_sdbm_hash("Dance");
-		constexpr EventId PlayerDied = make_sdbm_hash("PlayerDied");
-		constexpr EventId LivesChanged = make_sdbm_hash("LivesChanged");
-		constexpr EventId ScoreChanged = make_sdbm_hash("ScoreChanged");
-	}
-	namespace SoundIds
-	{
-		
-	}
-}
+//namespace dae
+//{
+//	namespace EventIds
+//	{
+//		constexpr EventId Dance = make_sdbm_hash("Dance");
+//		constexpr EventId PlayerDied = make_sdbm_hash("PlayerDied");
+//		constexpr EventId LivesChanged = make_sdbm_hash("LivesChanged");
+//		constexpr EventId ScoreChanged = make_sdbm_hash("ScoreChanged");
+//	}
+//	namespace SoundIds
+//	{
+//		
+//	}
+//	namespace GameCollisionLayers
+//	{
+//		
+//	}
+//
+//}
 GameStateManager g_GameStateManager;
 
 static void load()

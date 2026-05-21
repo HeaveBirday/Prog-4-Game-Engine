@@ -2,6 +2,7 @@
 
 namespace dae
 {
+	class GameObject;
     template <int length>
     struct sdbm_hash
     {
@@ -39,7 +40,8 @@ namespace dae
 
     namespace EventIds
     {
-        
+        constexpr EventId Collision = make_sdbm_hash("Collision");
+
     }
 
     struct Event
@@ -47,5 +49,8 @@ namespace dae
         EventId id{};
         int playerId{ -1 };
         int value{ 0 };
+
+        GameObject* objectA{};
+        GameObject* objectB{};
     };
 }

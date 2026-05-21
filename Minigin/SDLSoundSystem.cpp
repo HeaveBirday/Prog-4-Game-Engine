@@ -140,7 +140,6 @@ namespace dae
 				m_SoundQueue.push({ id, volume });
 			}
 			m_ConditionVariable.notify_one();
-			SDL_Log("Sound queued with id: %d at volume: %f", id, volume);
 		}
 
 		void PlaySoundInternal(const SoundRequest& request)
@@ -149,7 +148,6 @@ namespace dae
 
 			if (it == m_Sounds.end())
 			{
-				SDL_Log("Sound with id: %d not found!", request.id);
 				return;
 			}
 
@@ -171,7 +169,6 @@ namespace dae
 				SDL_Log("Failed to play sound id %d: %s", request.id, SDL_GetError());
 				return;
 			}
-			SDL_Log("Playing sound id %d at volume %.2f", request.id, request.volume);
 
 		}
 		void LoadSound(sound_id id, const std::string& filepath)
