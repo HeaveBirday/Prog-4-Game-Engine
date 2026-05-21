@@ -17,7 +17,8 @@ void dae::ShooterComponent::Update(float)
 void dae::ShooterComponent::Shoot()
 {
 	if (!m_TankComponent) return;
-
+	if (!m_TankComponent->CanShoot()) return;
+	m_TankComponent->ResetShootCooldown();
 	auto transform = GetOwner().GetTransform();
 	if (!transform) return; 
 	//Setting up the direction and spawn position of the bullet based on the rotation of the tank

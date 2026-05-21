@@ -127,8 +127,8 @@ namespace dae
 			m_Sounds.clear();
 			m_pTrack.reset();
 			m_pMixer.reset();
-			SDL_QuitSubSystem(SDL_INIT_AUDIO);
 			MIX_Quit();
+			SDL_QuitSubSystem(SDL_INIT_AUDIO);
 			SDL_Log("SDLSoundSystem shutdown complete");
 		}
 		void Play(sound_id id, float volume)
