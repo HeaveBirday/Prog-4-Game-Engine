@@ -11,6 +11,7 @@
 #include "../SoundIds.h"
 #include "TankComponent.h"
 #include "../GameCollisionLayer.h"
+#include "ObjectTypeComponent.h"
 void dae::ShooterComponent::Update(float)
 {
 }
@@ -42,7 +43,9 @@ void dae::ShooterComponent::Shoot()
 		bulletDirection = { 0.f, -1.f };
 	}
 	auto bulletGameObject = std::make_unique<GameObject>();
+
 	auto texture = ResourceManager::GetInstance().LoadTexture("BulletPlayer.png");
+	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize(), dae::GameCollisionLayers::Bullet);
 
 	glm::vec2 tankSize = m_TankComponent->GetSize();
 	glm::vec2 bulletSize = texture->GetSize();
@@ -56,8 +59,8 @@ void dae::ShooterComponent::Shoot()
 		bulletCenter - bulletSize / 2.f
 	};
 	bulletGameObject->SetPosition(bulletSpawnPos);
-	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize(), dae::GameCollisionLayers::Bullet);
-
+	
+	bulletGameObject->AddComponent<ObjectTypeComponent>(m_BulletType);
 	bulletGameObject->AddComponent<RenderComponent>(texture);
 	bulletGameObject->AddComponent<VelocityComponent>(200.f);
 	bulletGameObject->AddComponent<BulletComponent>(200.f, bulletDirection);

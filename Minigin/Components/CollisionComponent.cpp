@@ -9,17 +9,15 @@ void dae::CollisionComponent::Update(float)
 	//THE MOVEMENT UPDATE IN THE LATE UPDATE, SO THAT ALL COLLISION COMPONENTS HAVE THEIR NEW POSITIONS BEFORE CHECKING FOR COLLISIONS. THEN I CAN ALSO ADD A SEPARATE LATE UPDATE FUNCTION FOR 
 	//OTHER COMPONENTS THAT NEED TO RUN AFTER COLLISIONS ARE CHECKED, LIKE HEALTH COMPONENTS OR SOMETHING.
 
-	SDL_Log("Collider update layer: %u", m_CollisionLayer);
 	for (CollisionComponent* collider : s_AllColliders)
 	{
 		if (collider == this)
 			continue;
+		if (this > collider)
+			continue;
 		if (CheckCollision(*collider))
 		{
-			SDL_Log("Collision: layer %u with layer %u",
-				m_CollisionLayer,
-				collider->GetCollisionLayer());
-
+			SDL_Log("Collision detected between %p and %p", &GetOwner(), &collider->GetOwner());
 			EventManager::GetInstance().QueueEvent(
 				Event{
 					dae::EventIds::Collision,

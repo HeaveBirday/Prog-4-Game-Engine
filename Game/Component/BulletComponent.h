@@ -25,6 +25,9 @@ namespace dae
 		void Update(float dt) override;
 
 		void OnEvent(const Event& event) override;
+
+		void EnemyHit(GameObject* otherObject);
+		void PlayerHit();
 		
 	private:
 		float m_Speed;
