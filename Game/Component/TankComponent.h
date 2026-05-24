@@ -32,9 +32,11 @@ namespace dae
 		{
 			return m_Size;
 		}
+		glm::vec2 GetForwardDirection() const;
 		void Update(float dt) override;
 		bool CanShoot() const;
 		void ResetShootCooldown();
+
 	private:
 		Direction m_Direction{ Direction::Up };
 		glm::vec2 m_Size{};

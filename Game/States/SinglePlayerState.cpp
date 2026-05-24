@@ -54,7 +54,7 @@ void SinglePlayerState::OnEnter()
 
 	auto& tankComponent = greenTank->AddComponent<dae::TankComponent>(greenTankTexture->GetSize());
 	auto* greenTankPtr = greenTank.get();
-	greenTank->AddComponent<dae::ShooterComponent>(ObjectType::EnemyBullet);
+	greenTank->AddComponent<dae::ShooterComponent>(ObjectType::PlayerBullet);
 	scene.Add(std::move(greenTank));
 
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held, 
@@ -115,7 +115,8 @@ void SinglePlayerState::OnEnter()
 	auto wall = std::make_unique<dae::GameObject>();
 	wall->SetPosition(300.f, 200.f);
 	wall->AddComponent<ObjectTypeComponent>(ObjectType::Wall);
-	wall->AddComponent<dae::RenderComponent>(wallTexture);
+	auto& wallRender = wall->AddComponent<dae::RenderComponent>(wallTexture);
+	wallRender.SetScale(32.f / wallTexture->GetSize());
 	wall->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f,32.f }, dae::GameCollisionLayers::Wall);
 
 	scene.Add(std::move(wall));
