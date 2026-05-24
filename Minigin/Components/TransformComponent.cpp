@@ -18,7 +18,7 @@ void dae::TransformComponent::SetWorldPosition(glm::vec2 pos)
         const glm::vec2 parentPos = parentTr->GetWorldPosition();
        
 
-        m_LocalPos = parentPos;
+        m_LocalPos = pos - parentPos;
     }
     else
     {

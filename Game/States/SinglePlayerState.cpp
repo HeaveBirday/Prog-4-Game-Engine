@@ -22,6 +22,7 @@
 #include "InputManager.h"
 #include "../Commands/MoveCommand.h"
 #include "../Commands/ShootBulletCommand.h"
+#include "../Commands/RotateTurretCommand.h"
 #include "../GameCollisionLayer.h"
 #include <glm/glm.hpp>
 
@@ -37,8 +38,20 @@ void SinglePlayerState::OnEnter()
 	txtComponent.SetText("Single Player State Loaded");
 	scene.Add(std::move(go));
 
+
+	//Creating Turret for Player
+	auto turretTexture =
+		dae::ResourceManager::GetInstance().LoadTexture("RedTankGun.png");
+	auto turretSize = turretTexture->GetSize();
+
+	auto turret = std::make_unique<dae::GameObject>();
+	turret->AddComponent<dae::RenderComponent>(turretTexture);
+	auto* turretPtr = turret.get();
+	scene.Add(std::move(turret));
 	//Player Tank thingies
 	auto greenTankTexture = dae::ResourceManager::GetInstance().LoadTexture("GreenTank.png");
+	auto tankSize = greenTankTexture->GetSize();
+
 	auto& input = dae::InputManager::GetInstance();
 	const float keyboardSpeed = 120.f;
 	auto greenTank = std::make_unique<dae::GameObject>();
@@ -48,15 +61,21 @@ void SinglePlayerState::OnEnter()
 	greenTank->AddComponent<ObjectTypeComponent>(ObjectType::Player);
 	greenTank->AddComponent<LivesComponent>(3);
 	greenTank->AddComponent<PlayerScoreComponent>();
-
 	auto& velocityComponent = greenTank->AddComponent<dae::VelocityComponent>(keyboardSpeed);
 	greenTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f }, dae::GameCollisionLayers::Tank);
 
-	auto& tankComponent = greenTank->AddComponent<dae::TankComponent>(greenTankTexture->GetSize());
+	auto& tankComponent = greenTank->AddComponent<dae::TankComponent>(tankSize);
 	auto* greenTankPtr = greenTank.get();
 	greenTank->AddComponent<dae::ShooterComponent>(ObjectType::PlayerBullet);
 	scene.Add(std::move(greenTank));
 
+	//Placing Turret On Top Of Tank
+	turretPtr->SetParent(greenTankPtr, false);
+	turretPtr->GetTransform()->SetLocalPosition(
+							(tankSize.x - turretSize.y) / 2.f,
+							(tankSize.y - turretSize.y) / 2.f);
+
+	//Player Movement Commands
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held, 
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,-1 }));
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Released,
@@ -77,7 +96,12 @@ void SinglePlayerState::OnEnter()
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 0,0 }));
 
-	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Pressed,
+	//Turret Commands
+	input.BindCommand(SDLK_Z, dae::InputManager::ButtonState::Held,
+		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, -180.f));
+	input.BindCommand(SDLK_X, dae::InputManager::ButtonState::Held,
+		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, 180.f));
+	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Held,
 		std::make_unique<dae::ShootBulletCommand>(greenTankPtr));
 
 
@@ -120,6 +144,15 @@ void SinglePlayerState::OnEnter()
 	wall->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f,32.f }, dae::GameCollisionLayers::Wall);
 
 	scene.Add(std::move(wall));
+
+	auto wall1 = std::make_unique<dae::GameObject>();
+	wall1->SetPosition(150.f, 200.f);
+	wall1->AddComponent<ObjectTypeComponent>(ObjectType::Wall);
+	auto& wallRender1 = wall1->AddComponent<dae::RenderComponent>(wallTexture);
+	wallRender1.SetScale(32.f / wallTexture->GetSize());
+	wall1->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f,32.f }, dae::GameCollisionLayers::Wall);
+
+	scene.Add(std::move(wall1));
 }
 
 void SinglePlayerState::OnExit()

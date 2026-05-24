@@ -25,22 +25,14 @@ void dae::ShooterComponent::Shoot()
 	if (!transform) return; 
 	//Setting up the direction and spawn position of the bullet based on the rotation of the tank
 	glm::vec2 bulletDirection{};
-	const float rotation = transform->GetRotation();
-	if (rotation == 0.f)
+	auto* objectType = GetOwner().GetComponent<ObjectTypeComponent>();
+	if (objectType && objectType->GetType() == ObjectType::Player)
 	{
-		bulletDirection = { 1.f, 0.f };
+		bulletDirection = m_TankComponent->GetTurretDirection();
 	}
-	else if(rotation == 90.f)
+	else
 	{
-		bulletDirection = { 0.f, 1.f };
-	}
-	else if(rotation == 180.f)
-	{
-		bulletDirection = { -1.f, 0.f };
-	}
-	else if(rotation == 270.f)
-	{
-		bulletDirection = { 0.f, -1.f };
+		bulletDirection = m_TankComponent->GetForwardDirection();
 	}
 	auto bulletGameObject = std::make_unique<GameObject>();
 

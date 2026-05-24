@@ -1,6 +1,8 @@
 #pragma once
 #include <Components/Component.h>
 #include <Components/VelocityComponent.h>
+#include <Components/CollisionComponent.h>
+
 #include <GameObject.h>
 
 #include <EventManager.h>
@@ -11,7 +13,12 @@ namespace dae
 	{
 	public:
 		explicit BulletComponent(GameObject* owner, float speed, glm::vec2 direction)
-			:Component(owner), m_Speed(speed), m_Direction(direction)
+			:Component(owner),
+			m_Speed(speed), 
+			m_Direction(direction), 
+			m_Transform(owner->GetTransform()), 
+			m_Velocity(owner->GetComponent<VelocityComponent>()),
+			m_Collision(owner->GetComponent<CollisionComponent>())
 		{
 			owner->GetComponent<VelocityComponent>()->SetDirection(m_Direction);
 
@@ -28,10 +35,16 @@ namespace dae
 
 		void EnemyHit(GameObject* otherObject);
 		void PlayerHit();
-		
+		void Bounce(GameObject* wall);
+
 	private:
 		float m_Speed;
-		glm::vec2 m_Direction;
-
+		glm::vec2 m_Direction{};
+		TransformComponent* m_Transform{};
+		VelocityComponent* m_Velocity{};
+		CollisionComponent* m_Collision{};
+		glm::vec2 m_PreviousPos{};
+		int m_BounceCount{};
+		int m_MaxBounces{ 5 };
 	};
 }
