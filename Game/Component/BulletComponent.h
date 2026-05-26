@@ -46,5 +46,6 @@ namespace dae
 		glm::vec2 m_PreviousPos{};
 		int m_BounceCount{};
 		int m_MaxBounces{ 5 };
+		bool m_HasBouncedThisFrame{};
 	};
 }

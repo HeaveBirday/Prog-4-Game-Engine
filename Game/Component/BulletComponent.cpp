@@ -8,8 +8,9 @@
 #include <cmath>
 #include <SDL3/SDL_log.h>
 #include <EventManager.h>
-void dae::BulletComponent::Update(float )
+void dae::BulletComponent::Update(float)
 {
+	m_HasBouncedThisFrame = false;
 
 	if (!m_Transform) return;
 	m_PreviousPos = m_Transform->GetWorldPosition();
@@ -32,7 +33,11 @@ void dae::BulletComponent::OnEvent(const Event& event)
 	//Type Checking for what the bullet collided with
 	if (otherType->GetType() == ObjectType::Wall)
 	{
-		Bounce(otherObject);
+		if (!m_HasBouncedThisFrame)
+		{
+			Bounce(otherObject);
+			m_HasBouncedThisFrame = true;
+		}
 		return;
 	}
 
@@ -118,7 +123,7 @@ void dae::BulletComponent::Bounce(GameObject* wall)
 	const glm::vec2 currentPos = m_Transform->GetWorldPosition();
 	const glm::vec2 wallPos = wallTransform->GetWorldPosition();
 
-	const glm::vec2 bulletCenter = m_PreviousPos + bulletSize / 2.f;
+	const glm::vec2 bulletCenter = currentPos + bulletSize / 2.f;
 	const glm::vec2 wallCenter = wallTransform->GetWorldPosition() + wallSize / 2.f;
 
 	// Calculating overlap data
@@ -128,48 +133,24 @@ void dae::BulletComponent::Bounce(GameObject* wall)
 		(wallSize.y / 2.f + bulletSize.y / 2.f) - std::abs(difference.y)
 	};
 
-	const glm::vec2 oldDir = m_Direction;
-	glm::vec2 newPos = currentPos;
+	float projectionX{ glm::dot(glm::normalize(difference), glm::vec2{1,0}) };
+	float projectionY{ glm::dot(glm::normalize(difference), glm::vec2{0,1}) };
+	glm::vec2 wallNormal{};
 
-	// Corner collision: reverse both axes
-	const float cornerThreshold = 2.f;
-	if (std::abs(overlap.x - overlap.y) < cornerThreshold)
-	{
-		m_Direction.x *= -1.f;
-		m_Direction.y *= -1.f;
-		// Place bullet outside of wall on X axis
-		if (oldDir.x > 0.f)
-			newPos.x = wallPos.x - bulletSize.x - 1.f;
-		else if (oldDir.x < 0.f)
-			newPos.x = wallPos.x + wallSize.x + 1.f;
-		//Place bullet outside of wall on Y axis
-		if (oldDir.y > 0.f)
-			newPos.y = wallPos.y - bulletSize.y - 1.f;
-		else if (oldDir.y < 0.f)
-			newPos.y = wallPos.y + wallSize.y + 1.f;
-	}
-	//Horizontal collision
-	else if (overlap.x < overlap.y)
-	{
-		m_Direction.x *= -1.f;
 
-		if (oldDir.x > 0.f)
-			newPos.x = wallPos.x - bulletSize.x - 1.f;
-		else
-			newPos.x = wallPos.x + wallSize.x + 1.f;
+	if (std::abs(projectionX) > std::abs(projectionY))
+	{
+		wallNormal = glm::vec2{ projectionX / std::abs(projectionX), 0 };
 	}
-	//Vertical Collision
 	else
 	{
-		m_Direction.y *= -1.f;
-		if (oldDir.y > 0.f)
-			newPos.y = wallPos.y - bulletSize.y - 1.f;
-		else
-			newPos.y = wallPos.y + wallSize.y + 1.f;
+		wallNormal = glm::vec2{ 0,projectionY / std::abs(projectionY)};
 	}
+	
 	// Applying changes to direction
-	m_Direction = glm::normalize(m_Direction);
+	m_Direction = glm::normalize(
+	m_Direction - 2.f * glm::dot(m_Direction, wallNormal) * wallNormal);
 	m_Velocity->SetDirection(m_Direction);
-	m_Transform->SetWorldPosition(newPos);
+	m_Transform->SetWorldPosition(currentPos + wallNormal * std::abs(glm::dot(overlap, wallNormal)));
 	
 }

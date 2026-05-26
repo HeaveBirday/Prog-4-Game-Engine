@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "Component.h"
 #include <memory>
-
+#include <Texture2D.h>
 
 namespace dae
 {
