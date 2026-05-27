@@ -25,6 +25,7 @@ namespace dae
 		{
 			m_Direction = direction;
 		}
+		void SetMoveDirection(glm::vec2 direction);
 		Direction GetDirection() const
 		{
 			return m_Direction;
@@ -41,7 +42,6 @@ namespace dae
 		void Update(float dt) override;
 		bool CanShoot() const;
 		void ResetShootCooldown();
-
 	private:
 		Direction m_Direction{ Direction::Up };
 		glm::vec2 m_Size{};

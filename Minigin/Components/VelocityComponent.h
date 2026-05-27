@@ -23,7 +23,10 @@ namespace dae
             }
             m_Direction = glm::normalize(dir); 
         }
-
+        glm::vec2 GetDirection() const
+        {
+            return m_Direction;
+        }
     private:
         float m_Speed;
 		glm::vec2 m_Direction;

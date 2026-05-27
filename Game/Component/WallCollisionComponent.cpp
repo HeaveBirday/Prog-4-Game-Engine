@@ -1,29 +1,53 @@
-#include "WallCollisionComponent.h"
-#include "ObjectTypeComponent.h"
-#include "TankComponent.h"
-void dae::WallCollisionComponent::Update(float )
-{
-	m_PreviousPos = { GetOwner().GetTransform()->GetX(), GetOwner().GetTransform()->GetY() };
-}
+	#include "WallCollisionComponent.h"
+	#include "ObjectTypeComponent.h"
+	#include "TankComponent.h"
+	#include <Components/VelocityComponent.h>
+	#include "../Component/EnemyAIComponent.h"
+	void dae::WallCollisionComponent::Update(float )
+	{
+		m_PreviousPos = { GetOwner().GetTransform()->GetX(), GetOwner().GetTransform()->GetY() };
+	}
 
-void dae::WallCollisionComponent::OnEvent(const Event& event)
-{
-	if (event.id != EventIds::Collision) return;
-	// Check if the owner is involved in the collision
-	if (event.objectA != &GetOwner() && event.objectB != &GetOwner()) return;
+	void dae::WallCollisionComponent::OnEvent(const Event& event)
+	{
+		if (event.id != EventIds::Collision) return;
+		// Check if the owner is involved in the collision
+		if (event.objectA != &GetOwner() && event.objectB != &GetOwner()) return;
 
-	// Determine the other object involved in the collision
-	GameObject* otherObject =
-		event.objectA == &GetOwner() ? event.objectB : event.objectA;
+		// Determine the other object involved in the collision
+		GameObject* otherObject =
+			event.objectA == &GetOwner() ? event.objectB : event.objectA;
 
-	auto otherType = otherObject->GetComponent<ObjectTypeComponent>();
-	if (!otherType) return;
-	//Check if the collision is with a wall, if not we don't care about it
-	if (otherType->GetType() != ObjectType::Wall) return;
-	int blergh{};
-	blergh++;
-	//no further checks needed since only GameObjects that should be blocked by the wall have the WallCollisionComponent IE tanks
-	GetOwner().GetTransform()->SetPosition(m_PreviousPos);
-	
+		auto otherType = otherObject->GetComponent<ObjectTypeComponent>();
+		if (!otherType) return;
+		//Check if the collision is with a wall, if not we don't care about it
+		if (otherType->GetType() != ObjectType::Wall) return;
+		auto* transform = GetOwner().GetTransform();
 
-}
+		transform->SetPosition(m_PreviousPos);
+
+		if (auto enemyAI = GetOwner().GetComponent<EnemyAIComponent>())
+		{
+
+			if (auto* velocity = GetOwner().GetComponent<dae::VelocityComponent>())
+			{
+				glm::vec2 dir = velocity->GetDirection();
+
+				const float pushBack = 4.f;
+
+				transform->SetPosition(
+					transform->GetX() - dir.x * pushBack,
+					transform->GetY() - dir.y * pushBack
+				);
+			}
+
+			enemyAI->OnWallHit();
+		}
+		else if (auto* velocity = GetOwner().GetComponent<dae::VelocityComponent>())
+		{
+			transform->SetPosition(m_PreviousPos);
+			velocity->SetDirection({ 0.f, 0.f });
+		}
+
+
+	}

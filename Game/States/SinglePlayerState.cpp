@@ -42,7 +42,7 @@ void SinglePlayerState::OnEnter()
 
 
 	
-	auto playerObjects = tron::CreatePlayer(scene, { 200.f,200.f });
+	auto playerObjects = tron::CreatePlayer(scene, { 450.f,200.f });
 	auto* greenTankPtr = playerObjects.player;
 	auto* turretPtr = playerObjects.turret;
 

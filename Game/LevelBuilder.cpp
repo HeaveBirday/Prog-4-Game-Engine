@@ -18,6 +18,7 @@
 #include "../Game/Component/LivesComponent.h"
 #include "../Game/Component/PlayerScoreComponent.h"
 #include "../Game/Component/WallCollisionComponent.h"
+#include "../Game/Component/EnemyAIComponent.h"
 #include <Components/VelocityComponent.h>
 
 
@@ -28,21 +29,21 @@ void tron::LoadLevel1(dae::Scene& scene)
 	const std::vector<std::string> level =
 	{
 		"################################",
-		"#______________________________#",
-		"#______________________________#",
-		"#__#____#______________________#",
-		"#__#____#______________________#",
-		"#_______#______________________#",
-		"#_______#####__________________#",
-		"#__#____#___#__________________#",
-		"#__#___________________________#",
-		"#______________________________#",
-		"#______________________________#",
-		"#__###_________________________#",
-		"#__#_____#####_________________#",
-		"#__#_____#_____________________#",
-		"#__##__###_____________________#",
-		"#______________________________#",
+		"#__________#______________#____#",
+		"#__________#____######____######",
+		"#__#__###_______#____#_________#",
+		"#__#__#_#_______#______________#",
+		"#_____#_#_______________###__###",
+		"#_____#_#####__________#__#____#",
+		"#__#__#_#####____###___####____#",
+		"#__#__#_#________#_#_________###",
+		"#_____###______#####___________#",
+		"#__________E___________________#",
+		"#__###_________________##__#####",
+		"#__#_____#####____#_____#______#",
+		"#__#_____#_______##_____#______#",
+		"#__##__###________#_____#####__#",
+		"#________________##____________#",
 		"#______________________________#",
 		"################################",
 		
@@ -64,6 +65,8 @@ void tron::LoadLevel1(dae::Scene& scene)
 				break;
 			case 'E':
 				CreateEnemyTank(scene, pos);
+				break;
+			case 'P':
 				break;
 			}
 		}
@@ -96,8 +99,13 @@ void tron::CreateEnemyTank(dae::Scene& scene, glm::vec2 position)
 	blueTank->AddComponent<HealthComponent>(3);
 	blueTank->AddComponent<dae::RenderComponent>(blueTankTexture);
 	blueTank->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f,32.f }, dae::GameCollisionLayers::Tank);
+	blueTank->AddComponent<dae::WallCollisionComponent>();
+	blueTank->AddComponent<dae::VelocityComponent>(120.f);
 	blueTank->AddComponent<dae::TankComponent>(blueTankTexture->GetSize());
-	
+	blueTank->AddComponent<dae::ShooterComponent>(ObjectType::EnemyBullet);
+
+	blueTank->AddComponent<dae::EnemyAIComponent>();
+
 	scene.Add(std::move(blueTank));
 
 

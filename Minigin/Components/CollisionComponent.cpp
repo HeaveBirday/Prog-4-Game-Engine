@@ -17,7 +17,7 @@ void dae::CollisionComponent::Update(float)
 			continue;
 		if (CheckCollision(*collider))
 		{
-			SDL_Log("Collision detected between %p and %p", &GetOwner(), &collider->GetOwner());
+			//SDL_Log("Collision detected between %p and %p", &GetOwner(), &collider->GetOwner());
 			EventManager::GetInstance().QueueEvent(
 				Event{
 					dae::EventIds::Collision,

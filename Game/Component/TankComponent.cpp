@@ -1,5 +1,6 @@
 #include "TankComponent.h"
-
+#include <GameObject.h>
+#include <Components/TransformComponent.h>
 glm::vec2 dae::TankComponent::GetForwardDirection() const
 {
 	switch (m_Direction)
@@ -57,4 +58,31 @@ bool dae::TankComponent::CanShoot() const
 void dae::TankComponent::ResetShootCooldown()
 {
 	m_ShootCooldown = 0.5f; 
+}
+
+void dae::TankComponent::SetMoveDirection(glm::vec2 direction)
+{
+	if (direction == glm::vec2{ 0.f, 0.f })
+		return;
+
+	if (direction == glm::vec2{ 0.f, -1.f })
+	{
+		SetDirection(Direction::Up);
+		GetOwner().GetTransform()->SetRotation(270.f);
+	}
+	else if (direction == glm::vec2{ 0.f, 1.f })
+	{
+		SetDirection(Direction::Down);
+		GetOwner().GetTransform()->SetRotation(90.f);
+	}
+	else if (direction == glm::vec2{ -1.f, 0.f })
+	{
+		SetDirection(Direction::Left);
+		GetOwner().GetTransform()->SetRotation(180.f);
+	}
+	else if (direction == glm::vec2{ 1.f, 0.f })
+	{
+		SetDirection(Direction::Right);
+		GetOwner().GetTransform()->SetRotation(0.f);
+	}
 }
