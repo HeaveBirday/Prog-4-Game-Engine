@@ -121,7 +121,21 @@ void SinglePlayerState::LoadLevel()
 	auto playerObjects = tron::CreatePlayer(scene, { 450.f,200.f });
 	BindPlayerInput(playerObjects.player, playerObjects.turret);
 
-	m_EnemiesAlive = tron::LoadLevel1(scene);
+
+	switch (GameSession::CurrentLevel)
+	{
+	case 1:
+		m_EnemiesAlive = tron::LoadLevel1(scene);
+		break;
+
+	case 2:
+		m_EnemiesAlive = tron::LoadLevel2(scene);
+		break;
+
+	case 3:
+		m_EnemiesAlive = tron::LoadLevel3(scene);
+		break;
+	}
 	SDL_Log("Enemies alive: %d", m_EnemiesAlive);
 }
 

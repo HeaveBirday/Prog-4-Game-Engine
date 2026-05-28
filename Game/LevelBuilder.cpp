@@ -75,6 +75,112 @@ int tron::LoadLevel1(dae::Scene& scene)
 	return enemyCount;
 }
 
+int tron::LoadLevel2(dae::Scene& scene)
+{
+	const float tileSize = 32.f;
+
+	const std::vector<std::string> level =
+	{
+		"################################",
+		"#__________#______________#____#",
+		"#__________#____######____######",
+		"#__#__###_______#____#_________#",
+		"#__#__#_#_______#______________#",
+		"#_____#_#_______________###__###",
+		"#_____#_#####__________#__#____#",
+		"#__#__#_#####____###___####____#",
+		"#__#__#_#________#_#_________###",
+		"#_____###______#####___________#",
+		"#__________E___________________#",
+		"#__###_________________##__#####",
+		"#__#_____#####____#_____#______#",
+		"#__#_____#_______##_____#______#",
+		"#__##__###________#_____#####__#",
+		"#________________##____________#",
+		"#______________________________#",
+		"################################",
+
+	};
+	int enemyCount = 0;
+	for (int yPos = 0; yPos < static_cast<int>(level.size()); ++yPos)
+	{
+		for (int xPos = 0; xPos < static_cast<int>(level[yPos].size()); ++xPos)
+		{
+			glm::vec2 pos{
+				xPos * tileSize,
+				yPos * tileSize
+			};
+
+			switch (level[yPos][xPos])
+			{
+			case '#':
+				CreateWall(scene, pos);
+				break;
+			case 'E':
+				CreateEnemyTank(scene, pos);
+				enemyCount++;
+				break;
+			case 'P':
+				break;
+			}
+		}
+	}
+	return enemyCount;
+}
+
+int tron::LoadLevel3(dae::Scene& scene)
+{
+	const float tileSize = 32.f;
+
+	const std::vector<std::string> level =
+	{
+		"################################",
+		"#__________#______________#____#",
+		"#__________#____######____######",
+		"#__#__###_______#____#_________#",
+		"#__#__#_#_______#______________#",
+		"#_____#_#_______________###__###",
+		"#_____#_#####__________#__#____#",
+		"#__#__#_#####____###___####____#",
+		"#__#__#_#________#_#_________###",
+		"#_____###______#####___________#",
+		"#______________________________#",
+		"#__###_________________##__#####",
+		"#__#_____#####____#_____#______#",
+		"#__#_____#_______##_____#______#",
+		"#__##__###________#_____#####__#",
+		"#______E_________##____________#",
+		"#______________________________#",
+		"################################",
+
+	};
+	int enemyCount = 0;
+	for (int yPos = 0; yPos < static_cast<int>(level.size()); ++yPos)
+	{
+		for (int xPos = 0; xPos < static_cast<int>(level[yPos].size()); ++xPos)
+		{
+			glm::vec2 pos{
+				xPos * tileSize,
+				yPos * tileSize
+			};
+
+			switch (level[yPos][xPos])
+			{
+			case '#':
+				CreateWall(scene, pos);
+				break;
+			case 'E':
+				CreateEnemyTank(scene, pos);
+				enemyCount++;
+				break;
+			case 'P':
+				break;
+			}
+		}
+	}
+	return enemyCount;
+}
+
 void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
 {
 	auto wallTexture = dae::ResourceManager::GetInstance().LoadTexture("Wall.png");
