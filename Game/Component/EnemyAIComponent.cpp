@@ -37,13 +37,24 @@ void dae::EnemyAIComponent::Update(float dt)
 	moveCommand.Execute(dt);
 
 	m_ShootTimer -= dt;
+	if (GetOwner().IsDestroyed())
+	{
+		SDL_Log("Tank is Destroyed");
+		return;
+
+	}
+	if (!m_Velocity || !m_Tank)
+	{
+		SDL_Log("No velocity or no Enemy Tank");
+		return;
+	}
 
 	if (m_ShootTimer <= 0.f)
 	{
+		SDL_Log("Enemy tries to shoot");
 		if (m_Shooter)
 		{
 			m_Shooter->Shoot();
-			SDL_Log("Enemy tries to shoot");
 		}
 
 		m_ShootTimer = m_ShootInterval;

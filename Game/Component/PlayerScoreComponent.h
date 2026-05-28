@@ -3,7 +3,7 @@
 #include <IEventListener.h>
 #include <EventManager.h>
 #include "../TronEvents.h"
-
+#include "../GameSession.h"
 class PlayerScoreComponent final : public dae::Component, public dae::IEventListener
 {
 public:
@@ -20,12 +20,12 @@ public:
 	{
 		if (event.id == TronEventIds::EnemyDestroyed)
 		{
-			m_Score += event.value;
-			SDL_Log("Player score updated: %d", m_Score);
+			GameSession::Score += event.value;
+			SDL_Log("Player score updated: %d", GameSession::Score);
 		}
 	}
-	int GetScore() const { return m_Score; }
+	int GetScore() const { return GameSession::Score; }
 
 private:
-	int m_Score{};
+
 };

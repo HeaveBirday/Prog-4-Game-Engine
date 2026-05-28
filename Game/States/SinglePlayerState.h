@@ -1,7 +1,9 @@
 #pragma once
 #include "GameState.h"
+#include <IEventListener.h>
+#include <GameObject.h>
 
-class SinglePlayerState final : public GameState
+class SinglePlayerState final : public GameState, public dae::IEventListener
 {
 public:
 	void OnEnter() override;
@@ -9,4 +11,14 @@ public:
 
 	void HandleInput() override;
 	void Update(float deltaTime) override;
+
+	void OnEvent(const dae::Event& event) override;
+private:
+	void LoadLevel();
+	void BindPlayerInput(dae::GameObject* player, dae::GameObject* turret);
+	int m_EnemiesAlive{};
+
+	bool m_ShouldResetLevel{};
+	bool m_ShouldGameOver{};
+	bool m_ShouldLoadNextLevel{};
 };

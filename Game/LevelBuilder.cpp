@@ -22,7 +22,7 @@
 #include <Components/VelocityComponent.h>
 
 
-void tron::LoadLevel1(dae::Scene& scene)
+int tron::LoadLevel1(dae::Scene& scene)
 {
 	const float tileSize = 32.f;
 
@@ -43,12 +43,12 @@ void tron::LoadLevel1(dae::Scene& scene)
 		"#__#_____#####____#_____#______#",
 		"#__#_____#_______##_____#______#",
 		"#__##__###________#_____#####__#",
-		"#________________##____________#",
+		"#________________##__E_________#",
 		"#______________________________#",
 		"################################",
 		
 	};
-
+	int enemyCount = 0;
 	for (int yPos = 0; yPos < static_cast<int>(level.size()); ++yPos)
 	{
 		for (int xPos = 0; xPos < static_cast<int>(level[yPos].size()); ++xPos)
@@ -65,12 +65,14 @@ void tron::LoadLevel1(dae::Scene& scene)
 				break;
 			case 'E':
 				CreateEnemyTank(scene, pos);
+				enemyCount++;
 				break;
 			case 'P':
 				break;
 			}
 		}
 	}
+	return enemyCount;
 }
 
 void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
@@ -131,8 +133,6 @@ PlayerObjects  tron::CreatePlayer(dae::Scene& scene, glm::vec2 position)
 	player->AddComponent<dae::WallCollisionComponent>();
 	player->AddComponent<dae::RenderComponent>(tankTexture);
 	player->AddComponent<ObjectTypeComponent>(ObjectType::Player);
-	player->AddComponent<LivesComponent>(3);
-	player->AddComponent<PlayerScoreComponent>();
 
 	player->AddComponent<dae::VelocityComponent>(120.f);
 	player->AddComponent<dae::CollisionComponent>(

@@ -13,7 +13,7 @@ struct PlayerObjects
 };
 namespace tron
 {
-	void LoadLevel1(dae::Scene& scene);
+	int LoadLevel1(dae::Scene& scene);
 	void CreateWall(dae::Scene& scene, glm::vec2 position);
 
 	void CreateEnemyTank(dae::Scene& scene, glm::vec2 position);

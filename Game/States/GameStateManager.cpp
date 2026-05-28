@@ -2,16 +2,8 @@
 #include "GameState.h"
 void GameStateManager::SetState(std::unique_ptr<GameState> newState)
 {
-	if (m_CurrentState)
-	{
-		m_CurrentState->OnExit();
-	}
+	m_PendingState = std::move(newState);
 
-	m_CurrentState = std::move(newState);
-	if (m_CurrentState)
-	{
-		m_CurrentState->OnEnter();
-	}
 }
 
 void GameStateManager::HandleInput()
@@ -26,6 +18,24 @@ void GameStateManager::Update(float deltaTime)
 	if (m_CurrentState)
 	{
 		m_CurrentState->Update(deltaTime);
+	}
+	ProcessPendingStates();
+}
+
+void GameStateManager::ProcessPendingStates()
+{
+	if (!m_PendingState) return;
+
+	if (m_CurrentState)
+	{
+		m_CurrentState->OnExit();
+	}
+
+	m_CurrentState = std::move(m_PendingState);
+
+	if (m_CurrentState)
+	{
+		m_CurrentState->OnEnter();
 	}
 }
 

@@ -10,57 +10,14 @@
 #include "ServiceLocator.h"
 #include "SDLSoundSystem.h"
 #include "SoundIds.h"
-#include "GameCollisionLayer.h"
-#include "Scene.h"
 #include "States/GameStateManager.h"
-#include "States/SinglePlayerState.h"
 #include "States/MainMenuState.h"
 
-#include "Components/TransformComponent.h"
-#include "Components/RenderComponent.h"
-#include "Components/TextComponent.h"
-#include "Components/FPSComponent.h"
-#include "Components/WiggleComponent.h"
-#include "Components/RotatorComponent.h"
-#include "Components/HealthComponent.h"
-#include "Components/VelocityComponent.h"
-#include "Components/CollisionComponent.h"
-#include "Component/ShooterComponent.h"
-
-#include "InputManager.h"
-#include "ControllerInput.h"
-#include "Commands/PrintCommand.h"
-#include "Commands/MoveCommand.h"
-#include "Commands/LoseLifeCommand.h"
-#include "Components/LivesDisplayComponent.h"
-#include "Commands/ShootBulletCommand.h"
-
-
-#include "EventManager.h"
-#include "DebugEventListener.h"
 
 #include <filesystem>
 
 namespace fs = std::filesystem;
-//namespace dae
-//{
-//	namespace EventIds
-//	{
-//		constexpr EventId Dance = make_sdbm_hash("Dance");
-//		constexpr EventId PlayerDied = make_sdbm_hash("PlayerDied");
-//		constexpr EventId LivesChanged = make_sdbm_hash("LivesChanged");
-//		constexpr EventId ScoreChanged = make_sdbm_hash("ScoreChanged");
-//	}
-//	namespace SoundIds
-//	{
-//		
-//	}
-//	namespace GameCollisionLayers
-//	{
-//		
-//	}
-//
-//}
+
 GameStateManager g_GameStateManager;
 
 static void load()

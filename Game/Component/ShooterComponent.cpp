@@ -18,6 +18,11 @@ void dae::ShooterComponent::Update(float)
 
 void dae::ShooterComponent::Shoot()
 {
+	if (GetOwner().IsDestroyed())
+	{
+		SDL_Log("Tank is destroyed");
+		return;
+	}
 	if (!m_TankComponent) return;
 	if (!m_TankComponent->CanShoot()) return;
 	m_TankComponent->ResetShootCooldown();
@@ -46,7 +51,7 @@ void dae::ShooterComponent::Shoot()
 		transform->GetY() + tankSize.y / 2.f
 	};
 	glm::vec2 bulletCenter{
-		tankCenter + bulletDirection * ((tankSize.x / 2.f) + (bulletSize.x / 2.f)) };
+		tankCenter + bulletDirection * ((tankSize.x / 2.f) + (bulletSize.x / 2.f)) + 4.f};
 	glm::vec2 bulletSpawnPos{
 		bulletCenter - bulletSize / 2.f
 	};

@@ -18,6 +18,7 @@ void dae::BulletComponent::Update(float)
 
 void dae::BulletComponent::OnEvent(const Event& event)
 {
+	if (GetOwner().IsDestroyed()) return;
 	if (event.id != EventIds::Collision) return;
 
 	// Check if the bullet is involved in the collision
@@ -30,12 +31,29 @@ void dae::BulletComponent::OnEvent(const Event& event)
 	auto otherType = otherObject->GetComponent<ObjectTypeComponent>();
 	if (!bulletType || !otherType) return;
 	
+	SDL_Log(
+		"Bullet collision: bullet type %d with other type %d",
+		static_cast<int>(bulletType->GetType()),
+		static_cast<int>(otherType->GetType())
+	);
+	//in case Bullet collides with another Bullet
+	if (
+		(bulletType->GetType() == ObjectType::PlayerBullet ||
+			bulletType->GetType() == ObjectType::EnemyBullet)
+		&&
+		(otherType->GetType() == ObjectType::PlayerBullet ||
+			otherType->GetType() == ObjectType::EnemyBullet)
+		)
+	{
+		return;
+	}
 	//Type Checking for what the bullet collided with
 	if (otherType->GetType() == ObjectType::Wall)
 	{
 		if (!m_HasBouncedThisFrame)
 		{
 			Bounce(otherObject);
+			SDL_Log("Bullet bounced. Bounce count: %d", m_BounceCount);
 			m_HasBouncedThisFrame = true;
 		}
 		return;
@@ -53,6 +71,7 @@ void dae::BulletComponent::OnEvent(const Event& event)
 		otherType->GetType() == ObjectType::Player)
 	{
 		PlayerHit();
+		SDL_Log("Enemy bullet hit player");
 		return;
 	}
 }

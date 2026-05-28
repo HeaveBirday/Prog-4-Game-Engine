@@ -4,11 +4,13 @@
 #include <EventManager.h>
 #include "../TronEvents.h"
 #include <SDL3/SDL_log.h>
+#include "../GameSession.h"
+
 
 class LivesComponent final : public dae::Component, public dae::IEventListener
 {
 public:
-	LivesComponent(dae::GameObject* owner, int lives) : Component(owner), m_Lives(lives)
+	LivesComponent(dae::GameObject* owner) : Component(owner)
 	{
 		dae::EventManager::GetInstance().AddListener(this);
 	}
@@ -21,23 +23,37 @@ public:
 	{
 		if (event.id == TronEventIds::PlayerHit)
 		{
-			m_Lives--;
-			SDL_Log("Player hit! Lives remaining: %d", m_Lives);
+			GameSession::Lives--;
+			SDL_Log("Player hit! Lives remaining: %d", GameSession::Lives);
 
-			if(m_Lives <=0)
+			if (GameSession::Lives <= 0)
 			{
 				SDL_Log("Player has no more lives! Game Over!");
-				// Here could trigger a game over event or handle it as needed
+				dae::EventManager::GetInstance().QueueEvent({
+					TronEventIds::GameOver,
+					-1,
+					0,
+					&GetOwner(),
+					nullptr
+					});
 			}
 			else
 			{
 				SDL_Log("Reset current level");
+
+				dae::EventManager::GetInstance().QueueEvent({
+					TronEventIds::ResetLevel,
+					-1,
+					0,
+					&GetOwner(),
+					nullptr
+					});
 			}
 		}
 	}
 
-	int GetLives() const { return m_Lives; }
+	int GetLives() const { return GameSession::Lives; }
 
 private:
-	int m_Lives{};
+	
 };

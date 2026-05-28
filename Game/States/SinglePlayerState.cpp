@@ -6,29 +6,100 @@
 #include "Components/TextComponent.h"
 
 #include <SDL3/SDL.h>
-#include "Components/RenderComponent.h"
-#include "Components/HealthComponent.h"
+
 #include "Components/VelocityComponent.h"
-#include "Components/CollisionComponent.h"
-#include "../Component/ShooterComponent.h"
 #include "../Component/TankComponent.h"
-#include "../Component/ObjectTypeComponent.h"
-#include "../Component/HealthComponent.h"
-#include "../Component/ScoreComponent.h"
 #include "../Component/PlayerScoreComponent.h"
 #include "../Component/LivesComponent.h"
-#include "../Component/WallCollisionComponent.h"
-
 #include "InputManager.h"
 #include "../Commands/MoveCommand.h"
 #include "../Commands/ShootBulletCommand.h"
 #include "../Commands/RotateTurretCommand.h"
-#include "../GameCollisionLayer.h"
 #include <glm/glm.hpp>
-
 #include "../LevelBuilder.h"
 
+#include "GameStateManager.h"
+#include "GameOverState.h"
+extern GameStateManager g_GameStateManager;
+
 void SinglePlayerState::OnEnter()
+{
+	dae::EventManager::GetInstance().AddListener(this);
+
+	LoadLevel();
+
+}
+
+void SinglePlayerState::OnExit()
+{
+	dae::EventManager::GetInstance().RemoveListener(this);
+	dae::InputManager::GetInstance().ClearCommands();
+	dae::SceneManager::GetInstance().RemoveAll();
+}
+
+void SinglePlayerState::HandleInput()
+{
+}
+
+void SinglePlayerState::Update(float )
+{
+	if (m_ShouldResetLevel)
+	{
+		m_ShouldResetLevel = false;
+
+		dae::InputManager::GetInstance().ClearCommands();
+		dae::SceneManager::GetInstance().RemoveAll();
+
+		LoadLevel();
+	}
+
+	if (m_ShouldGameOver)
+	{
+		m_ShouldGameOver = false;
+
+		SDL_Log("Go to GameOverState later");
+		g_GameStateManager.SetState(std::make_unique<GameOverState>());
+	}
+	if (m_ShouldLoadNextLevel)
+	{
+		m_ShouldLoadNextLevel = false;
+
+		GameSession::CurrentLevel++;
+		if (GameSession::CurrentLevel > 3) GameSession::CurrentLevel = 1;
+
+		dae::InputManager::GetInstance().ClearCommands();
+		dae::SceneManager::GetInstance().RemoveAll();
+
+		LoadLevel();
+	}
+}
+
+void SinglePlayerState::OnEvent(const dae::Event& event)
+{
+	if (event.id == TronEventIds::ResetLevel)
+	{
+		SDL_Log("SinglePlayerState: reset level ");
+		m_ShouldResetLevel = true;
+	}
+	else if (event.id == TronEventIds::GameOver)
+	{
+		SDL_Log("SinglePlayerState: Game Over");
+		m_ShouldGameOver = true;
+	}
+	else if (event.id == TronEventIds::EnemyDestroyed)
+	{
+		m_EnemiesAlive--;
+
+		SDL_Log("Enemies alive: %d", m_EnemiesAlive);
+
+		if (m_EnemiesAlive <= 0)
+		{
+			m_ShouldLoadNextLevel = true;
+		}
+	}
+}
+
+void SinglePlayerState::LoadLevel()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	auto go = std::make_unique<dae::GameObject>();
@@ -40,36 +111,46 @@ void SinglePlayerState::OnEnter()
 	txtComponent.SetText("Single Player State Loaded");
 	scene.Add(std::move(go));
 
+	// Game Manager to handle global game systems 
+	auto gameManager = std::make_unique<dae::GameObject>();
+	gameManager->AddComponent<LivesComponent>();
+	gameManager->AddComponent<PlayerScoreComponent>();
+	scene.Add(std::move(gameManager));
 
-	
+	//Creating Player with Turret Object and getting them from LevelBuilder as a struct
 	auto playerObjects = tron::CreatePlayer(scene, { 450.f,200.f });
-	auto* greenTankPtr = playerObjects.player;
-	auto* turretPtr = playerObjects.turret;
+	BindPlayerInput(playerObjects.player, playerObjects.turret);
 
+	m_EnemiesAlive = tron::LoadLevel1(scene);
+	SDL_Log("Enemies alive: %d", m_EnemiesAlive);
+}
+
+void SinglePlayerState::BindPlayerInput(dae::GameObject* player, dae::GameObject* turretPtr)
+{
 	auto& input = dae::InputManager::GetInstance();
-	auto& velocityComponent = *greenTankPtr->GetComponent<dae::VelocityComponent>();
-	auto& tankComponent = *greenTankPtr->GetComponent<dae::TankComponent>();
+	auto& velocityComponent = *player->GetComponent<dae::VelocityComponent>();
+	auto& tankComponent = *player->GetComponent<dae::TankComponent>();
 
 	//Player Movement Commands
-	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held, 
+	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,-1 }));
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
-	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Held, 
+	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,1 }));
 	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
-	
-	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ -1,0 }));
-	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 0,0 }));
 
-	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Held, 
-		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 1,0 }));
+	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ -1,0 }));
+	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Released,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
+
+	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 1,0 }));
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Released,
-		std::make_unique<MoveCommand>(velocityComponent,tankComponent, glm::vec2{ 0,0 }));
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
 	//Turret Commands
 	input.BindCommand(SDLK_Z, dae::InputManager::ButtonState::Held,
@@ -77,24 +158,6 @@ void SinglePlayerState::OnEnter()
 	input.BindCommand(SDLK_X, dae::InputManager::ButtonState::Held,
 		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, 180.f));
 	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Held,
-		std::make_unique<dae::ShootBulletCommand>(greenTankPtr));
+		std::make_unique<dae::ShootBulletCommand>(player));
 
-
-	//Enemy Blue tank thingies for testing purposes
-	tron::LoadLevel1(scene);
-
-}
-
-void SinglePlayerState::OnExit()
-{
-	dae::InputManager::GetInstance().ClearCommands();
-	dae::SceneManager::GetInstance().RemoveAll();
-}
-
-void SinglePlayerState::HandleInput()
-{
-}
-
-void SinglePlayerState::Update(float )
-{
 }
