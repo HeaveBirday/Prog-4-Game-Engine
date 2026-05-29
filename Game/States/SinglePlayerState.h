@@ -16,6 +16,7 @@ public:
 private:
 	void LoadLevel();
 	void BindPlayerInput(dae::GameObject* player, dae::GameObject* turret);
+	void SkipLevel() override;
 	int m_EnemiesAlive{};
 
 	bool m_ShouldResetLevel{};

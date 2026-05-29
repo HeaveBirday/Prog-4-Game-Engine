@@ -9,10 +9,10 @@ public:
 
 	void HandleInput();
 	void Update(float deltaTime);
+	void SkipLevel();
 
 private:
 	void ProcessPendingStates();
-
 	std::unique_ptr<GameState> m_CurrentState{};
 	std::unique_ptr<GameState> m_PendingState{};
 };

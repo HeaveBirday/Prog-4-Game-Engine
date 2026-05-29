@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 #include "Components/TextComponent.h"
+#include <Commands/ToggleMuteCommand.h>
 
 #include <SDL3/SDL.h>
 
@@ -20,6 +21,8 @@
 
 #include "GameStateManager.h"
 #include "GameOverState.h"
+#include "../Commands/SkipLevelCommand.h"
+
 extern GameStateManager g_GameStateManager;
 
 void SinglePlayerState::OnEnter()
@@ -118,25 +121,38 @@ void SinglePlayerState::LoadLevel()
 	scene.Add(std::move(gameManager));
 
 	//Creating Player with Turret Object and getting them from LevelBuilder as a struct
-	auto playerObjects = tron::CreatePlayer(scene, { 450.f,200.f });
-	BindPlayerInput(playerObjects.player, playerObjects.turret);
+	const std::vector<std::string>* currentLevel = &tron::GetLevel1();
 
+	switch (GameSession::CurrentLevel)
+	{
+	case 1:
+		currentLevel = &tron::GetLevel1();
+		break;
+	case 2:
+		currentLevel = &tron::GetLevel2();
+		break;
+	case 3:
+		currentLevel = &tron::GetLevel3();
+		break;
+	}
+
+	auto playerObjects = tron::CreatePlayer(scene, { 448.f, 192.f }, *currentLevel);
+	BindPlayerInput(playerObjects.player, playerObjects.turret);
 
 	switch (GameSession::CurrentLevel)
 	{
 	case 1:
 		m_EnemiesAlive = tron::LoadLevel1(scene);
 		break;
-
 	case 2:
 		m_EnemiesAlive = tron::LoadLevel2(scene);
 		break;
-
 	case 3:
 		m_EnemiesAlive = tron::LoadLevel3(scene);
 		break;
 	}
 	SDL_Log("Enemies alive: %d", m_EnemiesAlive);
+
 }
 
 void SinglePlayerState::BindPlayerInput(dae::GameObject* player, dae::GameObject* turretPtr)
@@ -174,4 +190,16 @@ void SinglePlayerState::BindPlayerInput(dae::GameObject* player, dae::GameObject
 	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Held,
 		std::make_unique<dae::ShootBulletCommand>(player));
 
+	input.BindCommand(
+		SDLK_F1,
+		dae::InputManager::ButtonState::Released,
+		std::make_unique<SkipLevelCommand>(g_GameStateManager));
+	input.BindCommand(SDLK_F2,
+		dae::InputManager::ButtonState::Released,
+		std::make_unique<ToggleMuteCommand>());
+}
+
+void SinglePlayerState::SkipLevel()
+{
+	m_ShouldLoadNextLevel = true;
 }

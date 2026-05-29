@@ -8,7 +8,7 @@ struct GameSession
 
 	static void Reset()
 	{
-		Lives = 3;
+		Lives = 4;
 		Score = 0;
 		CurrentLevel = 1;
 	}

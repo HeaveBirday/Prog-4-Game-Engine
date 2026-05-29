@@ -40,8 +40,21 @@ void dae::ShooterComponent::Shoot()
 		bulletDirection = m_TankComponent->GetForwardDirection();
 	}
 	auto bulletGameObject = std::make_unique<GameObject>();
+	std::shared_ptr<Texture2D> texture;
 
-	auto texture = ResourceManager::GetInstance().LoadTexture("BulletPlayer.png");
+	if (m_BulletType == ObjectType::PlayerBullet)
+	{
+		texture = ResourceManager::GetInstance().LoadTexture("BulletPlayer.png");
+	}
+	else if (m_BulletType == ObjectType::EnemyBullet)
+	{
+		texture = ResourceManager::GetInstance().LoadTexture("BulletEnemy.png");
+	}
+	else
+	{
+		texture = ResourceManager::GetInstance().LoadTexture("BulletPlayer.png");
+	}
+
 	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize(), dae::GameCollisionLayers::Bullet);
 
 	glm::vec2 tankSize = m_TankComponent->GetSize();

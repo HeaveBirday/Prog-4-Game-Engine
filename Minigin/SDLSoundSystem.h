@@ -14,6 +14,9 @@ namespace dae
 		void Play(sound_id id, float vlolume) override;
 		void LoadSound(sound_id id, const std::string& filePath) override;
 
+		void SetMuted(bool muted) override;
+		bool IsMuted() const override;
+		void ToggleMuted() override;
 	private:
 
 		class Impl;

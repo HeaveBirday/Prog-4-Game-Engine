@@ -38,4 +38,10 @@ void GameStateManager::ProcessPendingStates()
 		m_CurrentState->OnEnter();
 	}
 }
-
+void GameStateManager::SkipLevel()
+{
+	if (m_CurrentState)
+	{
+		m_CurrentState->SkipLevel();
+	}
+}

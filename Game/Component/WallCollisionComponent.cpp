@@ -26,24 +26,8 @@
 
 		transform->SetPosition(m_PreviousPos);
 
-		if (auto enemyAI = GetOwner().GetComponent<EnemyAIComponent>())
-		{
 
-			if (auto* velocity = GetOwner().GetComponent<dae::VelocityComponent>())
-			{
-				glm::vec2 dir = velocity->GetDirection();
-
-				const float pushBack = 4.f;
-
-				transform->SetPosition(
-					transform->GetX() - dir.x * pushBack,
-					transform->GetY() - dir.y * pushBack
-				);
-			}
-
-			enemyAI->OnWallHit();
-		}
-		else if (auto* velocity = GetOwner().GetComponent<dae::VelocityComponent>())
+		if (auto* velocity = GetOwner().GetComponent<dae::VelocityComponent>())
 		{
 			transform->SetPosition(m_PreviousPos);
 			velocity->SetDirection({ 0.f, 0.f });

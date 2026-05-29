@@ -137,6 +137,7 @@ namespace dae
 			{
 				std::lock_guard lock(m_Mutex);
 				if (!m_IsRunning) return;
+				if (m_IsMuted) return;
 				m_SoundQueue.push({ id, volume });
 			}
 			m_ConditionVariable.notify_one();
@@ -189,7 +190,24 @@ namespace dae
 
 
 		}
+		void SetMuted(bool muted)
+		{
+			std::lock_guard lock(m_Mutex);
+			m_IsMuted = muted;
+		}
 
+		bool IsMuted() const
+		{
+			return m_IsMuted;
+		}
+
+		void ToggleMuted()
+		{
+			std::lock_guard lock(m_Mutex);
+			m_IsMuted = !m_IsMuted;
+
+			SDL_Log("Sound muted: %s", m_IsMuted ? "true" : "false");
+		}
 		void ThreadMain()
 		{
 			while (true)
@@ -224,11 +242,27 @@ namespace dae
 		MixerPtr m_pMixer{};
 		TrackPtr m_pTrack{};
 		
+		bool m_IsMuted{};
 	};
 
 	SDLSoundSystem::SDLSoundSystem() : m_pImpl{ std::make_unique<Impl>() }
 	{
 
+	}
+
+	void SDLSoundSystem::SetMuted(bool muted)
+	{
+		m_pImpl->SetMuted(muted);
+	}
+
+	bool SDLSoundSystem::IsMuted() const
+	{
+		return m_pImpl->IsMuted();
+	}
+
+	void SDLSoundSystem::ToggleMuted()
+	{
+		m_pImpl->ToggleMuted();
 	}
 
 	SDLSoundSystem::~SDLSoundSystem() = default;

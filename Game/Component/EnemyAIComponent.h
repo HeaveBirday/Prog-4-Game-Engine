@@ -1,36 +1,37 @@
 #pragma once
 #include <Components/Component.h>
 #include <glm/glm.hpp>
-#include <../Game/Commands/MoveCommand.h>
-
+#include <vector>
+#include <string>
 namespace dae
 {
-	class VelocityComponent;
-	class TankComponent;
-	class ShooterComponent;
 
+	class ShooterComponent;
+	class TransformComponent;
+	class TankComponent;
 	class EnemyAIComponent final : public Component
 	{
 	public:
-		explicit EnemyAIComponent(GameObject* owner);
+		explicit EnemyAIComponent(GameObject* owner, const std::vector<std::string>& level);
 		void Update(float dt) override;
-		void OnWallHit();
 
 	private:
 		void PickRandomDirection();
+		bool IsWallAtTile(int x, int y) const;
+		glm::ivec2 GetCurrentTile() const;
+		const std::vector<std::string>& m_Level;
 
-		VelocityComponent* m_Velocity{};
-		TankComponent* m_Tank{};
 		ShooterComponent* m_Shooter{};
-
-		glm::vec2 m_CurrentDirection{};
-
-		float m_DirectionTimer{};
-		float m_DirectionChangeInterval{ 1.f };
-		float m_WallCooldown{};
-
+		TransformComponent* m_Transform{};
+		TankComponent* m_Tank{};
+		glm::vec2 m_CurrentDirection{ 1.f, 0.f };
+		glm::vec2 m_TargetPosition{};
+		bool m_IsMovingToTile{false};
+		
+		float m_Speed{ 120.f };
+		float m_TileSize{ 32.f };
 
 		float m_ShootTimer{};
-		float m_ShootInterval{ 2.f };
+		float m_ShootInterval{2.f};
 	};
 }
