@@ -97,6 +97,15 @@ namespace dae
 			{
 				SDL_Log("Track created successfully");
 			}
+			m_pLoopingTrack.reset(MIX_CreateTrack(m_pMixer.get()));
+			if (!m_pLoopingTrack)
+			{
+				SDL_Log("Failed to create music track: %s", SDL_GetError());
+			}
+			else
+			{
+				SDL_Log("Music track created successfully");
+			}
 			m_SoundThread = std::thread(&Impl::ThreadMain, this);
 		}
 		~Impl()
@@ -124,8 +133,15 @@ namespace dae
 				MIX_SetTrackAudio(m_pTrack.get(), nullptr);
 			}
 
+			if (m_pLoopingTrack)
+			{
+				MIX_StopTrack(m_pLoopingTrack.get(), 0);
+				MIX_SetTrackAudio(m_pLoopingTrack.get(), nullptr);
+			}
+
 			m_Sounds.clear();
 			m_pTrack.reset();
+			m_pLoopingTrack.reset();
 			MIX_DestroyMixer(m_pMixer.release());
 			m_pMixer.reset();
 			MIX_Quit();
@@ -142,7 +158,44 @@ namespace dae
 			}
 			m_ConditionVariable.notify_one();
 		}
+		void PlayLooping(sound_id id, float volume)
+		{
+			auto it = m_Sounds.find(id);
 
+			if (it == m_Sounds.end())
+			{
+				SDL_Log("Sound with id %d not found for looping playback", id);
+				return;
+			}
+			if (!m_pLoopingTrack)
+			{
+				SDL_Log("No looping track available");
+				return;
+			}
+			if (m_IsMuted) return;
+
+			if (!MIX_SetTrackAudio(m_pLoopingTrack.get(), it->second.get()))
+			{
+				SDL_Log("Failed to set looping track audio for sound id %d: %s", id, SDL_GetError());
+				return;
+			}
+			MIX_SetTrackAudio(m_pLoopingTrack.get(), it->second.get());
+			MIX_SetTrackGain(m_pLoopingTrack.get(), volume);
+
+			SDL_PropertiesID loopProperties = SDL_CreateProperties();
+			SDL_SetNumberProperty(loopProperties, MIX_PROP_PLAY_LOOPS_NUMBER, -1);
+
+			if (!MIX_PlayTrack(m_pLoopingTrack.get(), loopProperties))
+			{
+				SDL_Log("Failed to play looping sound id %d: %s", id, SDL_GetError());
+				return;
+			}
+			m_CurrentLoopingSound = id;
+			m_CurrentLoopingVolume = volume;
+			m_HasLoopingSound = true;
+			SDL_DestroyProperties(loopProperties);
+
+		}
 		void PlaySoundInternal(const SoundRequest& request)
 		{
 			auto it = m_Sounds.find(request.id);
@@ -206,6 +259,30 @@ namespace dae
 			std::lock_guard lock(m_Mutex);
 			m_IsMuted = !m_IsMuted;
 
+			if (m_IsMuted)
+			{
+				if (m_pLoopingTrack)
+				{
+					MIX_StopTrack(m_pLoopingTrack.get(), 0);
+				}
+			}
+			else
+			{
+				if (m_HasLoopingSound)
+				{
+					auto it = m_Sounds.find(m_CurrentLoopingSound);
+					if (it != m_Sounds.end() && m_pLoopingTrack)
+					{
+						MIX_SetTrackAudio(m_pLoopingTrack.get(), it->second.get());
+						MIX_SetTrackGain(m_pLoopingTrack.get(), m_CurrentLoopingVolume);
+
+						SDL_PropertiesID props = SDL_CreateProperties();
+						SDL_SetNumberProperty(props, MIX_PROP_PLAY_LOOPS_NUMBER, -1);
+						MIX_PlayTrack(m_pLoopingTrack.get(), props);
+						SDL_DestroyProperties(props);
+					}
+				}
+			}
 			SDL_Log("Sound muted: %s", m_IsMuted ? "true" : "false");
 		}
 		void ThreadMain()
@@ -241,8 +318,11 @@ namespace dae
 		std::unordered_map<sound_id, AudioPtr> m_Sounds;
 		MixerPtr m_pMixer{};
 		TrackPtr m_pTrack{};
-		
+		TrackPtr m_pLoopingTrack{};
 		bool m_IsMuted{};
+		sound_id m_CurrentLoopingSound{};
+		float m_CurrentLoopingVolume{};
+		bool m_HasLoopingSound{ false };
 	};
 
 	SDLSoundSystem::SDLSoundSystem() : m_pImpl{ std::make_unique<Impl>() }
@@ -270,6 +350,10 @@ namespace dae
 	void SDLSoundSystem::Play(sound_id id, float volume)
 	{
 		m_pImpl->Play(id, volume);
+	}
+	void SDLSoundSystem::PlayLooping(sound_id id, float volume)
+	{
+		m_pImpl->PlayLooping(id, volume);
 	}
 	void SDLSoundSystem::LoadSound(sound_id id, const std::string& filePath)
 	{

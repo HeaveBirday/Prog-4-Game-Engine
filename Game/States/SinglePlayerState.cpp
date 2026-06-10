@@ -102,17 +102,23 @@ void SinglePlayerState::OnEvent(const dae::Event& event)
 	}
 }
 
+void SinglePlayerState::UpdateHud()
+{
+	if (m_ScoreText)
+		m_ScoreText->SetText("Score: " + std::to_string(GameSession::Score));
+
+	if (m_LivesText)
+		m_LivesText->SetText("Lives: " + std::to_string(GameSession::Lives));
+
+
+}
+
 void SinglePlayerState::LoadLevel()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	auto go = std::make_unique<dae::GameObject>();
 
-	//Title Screen thingies
-	go->SetPosition(292.f, 20.f);
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-	auto& txtComponent = go->AddComponent<dae::TextComponent>(font.get(), SDL_Color{ 255, 255, 0, 255 });
-	txtComponent.SetText("Single Player State Loaded");
-	scene.Add(std::move(go));
+	
 
 	// Game Manager to handle global game systems 
 	auto gameManager = std::make_unique<dae::GameObject>();
@@ -136,22 +142,27 @@ void SinglePlayerState::LoadLevel()
 		break;
 	}
 
-	auto playerObjects = tron::CreatePlayer(scene, { 448.f, 192.f }, *currentLevel);
+	glm::vec2 playerSpawn = tron::GetPlayerStartPos(*currentLevel);
+	auto playerObjects = tron::CreatePlayer(scene, playerSpawn, *currentLevel);
 	BindPlayerInput(playerObjects.player, playerObjects.turret);
 
-	switch (GameSession::CurrentLevel)
-	{
-	case 1:
-		m_EnemiesAlive = tron::LoadLevel1(scene);
-		break;
-	case 2:
-		m_EnemiesAlive = tron::LoadLevel2(scene);
-		break;
-	case 3:
-		m_EnemiesAlive = tron::LoadLevel3(scene);
-		break;
-	}
+	m_EnemiesAlive = tron::LoadLevel(scene, *currentLevel);
 	SDL_Log("Enemies alive: %d", m_EnemiesAlive);
+
+	//HUD INFO
+	auto hudFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+
+	auto scoreObj = std::make_unique<dae::GameObject>();
+	scoreObj->SetPosition(20.f, 20.f);
+	m_ScoreText = &scoreObj->AddComponent<dae::TextComponent>(hudFont.get(),SDL_Color{ 255, 255, 255, 255 });
+	scene.Add(std::move(scoreObj));
+
+	auto livesObj = std::make_unique<dae::GameObject>();
+	livesObj->SetPosition(180.f, 20.f);
+	m_LivesText = &livesObj->AddComponent<dae::TextComponent>(hudFont.get(),SDL_Color{ 255, 255, 255, 255 });
+	scene.Add(std::move(livesObj));
+
+	UpdateHud();
 
 }
 
@@ -162,26 +173,48 @@ void SinglePlayerState::BindPlayerInput(dae::GameObject* player, dae::GameObject
 	auto& tankComponent = *player->GetComponent<dae::TankComponent>();
 
 	//Player Movement Commands
+
+	//UP
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,-1 }));
 	input.BindCommand(SDLK_W, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadUp, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,-1 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadUp, dae::InputManager::ButtonState::Released,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
+	//DOWN
 	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,1 }));
 	input.BindCommand(SDLK_S, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadDown, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,1 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadDown, dae::InputManager::ButtonState::Released,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
+
+	//LEFT
 	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ -1,0 }));
 	input.BindCommand(SDLK_A, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadLeft, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ -1,0 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadLeft, dae::InputManager::ButtonState::Released,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
 
+	//RIGHT
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Held,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 1,0 }));
 	input.BindCommand(SDLK_D, dae::InputManager::ButtonState::Released,
 		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
-
+	input.BindCommand(dae::ControllerInput::Button::DPadRight, dae::InputManager::ButtonState::Held,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 1,0 }));
+	input.BindCommand(dae::ControllerInput::Button::DPadRight, dae::InputManager::ButtonState::Released,
+		std::make_unique<MoveCommand>(velocityComponent, tankComponent, glm::vec2{ 0,0 }));
+	
 	//Turret Commands
 	input.BindCommand(SDLK_Z, dae::InputManager::ButtonState::Held,
 		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, -180.f));
@@ -189,6 +222,13 @@ void SinglePlayerState::BindPlayerInput(dae::GameObject* player, dae::GameObject
 		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, 180.f));
 	input.BindCommand(SDLK_SPACE, dae::InputManager::ButtonState::Held,
 		std::make_unique<dae::ShootBulletCommand>(player));
+	input.BindCommand(dae::ControllerInput::Button::X, dae::InputManager::ButtonState::Held,
+		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, -180.f));
+	input.BindCommand(dae::ControllerInput::Button::B, dae::InputManager::ButtonState::Held,
+		std::make_unique<RotateTurretCommand>(tankComponent, *turretPtr, 180.f));
+	input.BindCommand(dae::ControllerInput::Button::A, dae::InputManager::ButtonState::Held,
+		std::make_unique<dae::ShootBulletCommand>(player));
+
 
 	input.BindCommand(
 		SDLK_F1,

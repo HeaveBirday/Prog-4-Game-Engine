@@ -19,6 +19,10 @@ namespace dae
 
 		};
 
+		bool IsPressed(ControllerInput::Button button) const;
+		bool IsHeld(ControllerInput::Button button) const;
+		bool IsReleased(ControllerInput::Button button) const;
+
 		void BindCommand(SDL_Keycode key, ButtonState buttonState, std::unique_ptr<Command> command);
 		void BindCommand(ControllerInput::Button button, ButtonState buttonState, std::unique_ptr<Command> command);
 		void UnbindCommand(ControllerInput::Button button, ButtonState buttonState);

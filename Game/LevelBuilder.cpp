@@ -22,46 +22,24 @@
 #include <Components/VelocityComponent.h>
 #include "../Game/Component/PlayerTouchHitComponent.h"
 
-static const std::vector<std::string> s_Level1 =
-{
-	"################################",
-	"#__________#______________#____#",
-	"#__________#____######____######",
-	"#__#__###_______#____#___R_____#",
-	"#__#__#_#_______#______________#",
-	"#_____#_#_______________###__###",
-	"#_____#_#####__________#__#____#",
-	"#__#__#_#####______#___####____#",
-	"#__#__#_#________D_#_________###",
-	"#_____###______#####___________#",
-	"#__________E___________________#",
-	"#__###_________________##__#####",
-	"#__#_____#####____#_____#______#",
-	"#__#_____#_______##_____#______#",
-	"#__##__###________#_____#####__#",
-	"#________________##__E_________#",
-	"#______________________________#",
-	"################################",
-
-};
 static const std::vector<std::string> s_Level2 =
 {
 	"################################",
-	"#__________#______________#____#",
-	"#__________#____######____######",
-	"#__#__###_______#____#_________#",
-	"#__#__#_#_______#______________#",
-	"#_____#_#_______________###__###",
+	"################################",
+	"#____________#_________________#",
+	"#_#___###__######____#___R_____#",
+	"#_#___#_#_______#____#_________#",
+	"#_#___#_#_______###_____###__###",
 	"#_____#_#####__________#__#____#",
-	"#__#__#_#####____###___####____#",
-	"#__#__#_#________#_#_________###",
-	"#_____###______#####___R_______#",
-	"#__________E___________________#",
-	"#__###_________________##__#####",
-	"#__#_____#####____#_____#______#",
-	"#__#_____#_______##_____#______#",
-	"#__##__###________#_____#####__#",
-	"#________________##____________#",
+	"###___#_#####______#__#####____#",
+	"#_#___#_#________D_#____#____###",
+	"#_____###______#####__######___#",
+	"#__________E________________P__#",
+	"#_#_##______________#####_######",
+	"#_#______#####____#_____#______#",
+	"#_#______________##_____#______#",
+	"#_#_#__###________#_____#####__#",
+	"#_#______________##__E_________#",
 	"#______________________________#",
 	"################################",
 
@@ -69,21 +47,43 @@ static const std::vector<std::string> s_Level2 =
 static const std::vector<std::string> s_Level3 =
 {
 	"################################",
-	"#__________#______________#____#",
-	"#__________#____######____######",
+	"########################D____P_##",
+	"#____________________###########",
+	"#_#___###_______#____#___R_____#",
+	"#_#___#_##______####___________#",
+	"#_#___#_________#____######____#",
+	"#_#___#____##___#______#__#__#_#",
+	"#_#___#___###___####___#_____#_#",
+	"#_R___#_##_#_____D#____#__##_#_#",
+	"###___###__#_______#___#__#__#_#",
+	"#__________E__###__#___________#",
+	"#_#_##_________________##__#####",
+	"#_#______#####____#_____#______#",
+	"#_#______#_#_#_____####_#______#",
+	"#_#_#__###____________#____##__#",
+	"#_#___#____#_____##__E_________#",
+	"#__E__#____#___________________#",
+	"################################",
+
+};
+static const std::vector<std::string> s_Level1 =
+{
+	"################################",
+	"################################",
+	"################################",
 	"#__#__###_______#____#_________#",
 	"#__#__#_#_______#______________#",
-	"#_____#_#_______________###__###",
-	"#_____#_#####__________#__#____#",
-	"#__#__#_#####____###___####____#",
-	"#__#__#_#________#_#_________###",
+	"#_____#_#______R________###__###",
+	"#__P__#_#####__________#__#____#",
+	"#__#__#_#####______#___####____#",
+	"#__#__#_#________D_#_________###",
 	"#_____###______#####___________#",
 	"#______________________________#",
 	"#__###_________________##__#####",
 	"#__#_____#####____#_____#______#",
-	"#__#_____#_______##_____#______#",
-	"#__##__###________#_____#####__#",
-	"#______E_____R___##____________#",
+	"#__#_____#_______#####__#______#",
+	"#__##__###________#__#__#####__#",
+	"#________#____E__##__#_________#",
 	"#______________________________#",
 	"################################",
 
@@ -103,110 +103,45 @@ const std::vector<std::string>& tron::GetLevel3()
 	return s_Level3;
 }
 
-int tron::LoadLevel1(dae::Scene& scene)
+int tron::LoadLevel(dae::Scene& scene, const std::vector<std::string>& level)
 {
 	const float tileSize = 32.f;
-
-	
 	int enemyCount = 0;
-	for (int yPos = 0; yPos < static_cast<int>(s_Level1.size()); ++yPos)
+
+	for (int yPos = 0; yPos < static_cast<int>(level.size()); ++yPos)
 	{
-		for (int xPos = 0; xPos < static_cast<int>(s_Level1[yPos].size()); ++xPos)
+		for (int xPos = 0; xPos < static_cast<int>(level[yPos].size()); ++xPos)
 		{
 			glm::vec2 pos{
 				xPos * tileSize,
 				yPos * tileSize
 			};
 
-			switch (s_Level1[yPos][xPos])
+			switch (level[yPos][xPos])
 			{
 			case '#':
 				CreateWall(scene, pos);
 				break;
 			case 'E':
-				CreateEnemyTank(scene, pos, s_Level1);
+				CreateEnemyTank(scene, pos, level);
 				enemyCount++;
 				break;
 			case 'R':
-				CreateEnemyRecognizer(scene, pos, s_Level1);
+				CreateEnemyRecognizer(scene, pos, level);
 				enemyCount++;
 				break;
 			case 'D':
 				CreateDiamond(scene, pos);
 				break;
-			}
-		}
-	}
-	return enemyCount;
-}
-
-int tron::LoadLevel2(dae::Scene& scene)
-{
-	const float tileSize = 32.f;
-
-	
-	int enemyCount = 0;
-	for (int yPos = 0; yPos < static_cast<int>(s_Level2.size()); ++yPos)
-	{
-		for (int xPos = 0; xPos < static_cast<int>(s_Level2[yPos].size()); ++xPos)
-		{
-			glm::vec2 pos{
-				xPos * tileSize,
-				yPos * tileSize
-			};
-
-			switch (s_Level2[yPos][xPos])
-			{
-			case '#':
-				CreateWall(scene, pos);
-				break;
-			case 'E':
-				CreateEnemyTank(scene, pos, s_Level2);
-				enemyCount++;
-				break;
-			case 'R':
-				CreateEnemyRecognizer(scene, pos, s_Level2);
-				enemyCount++;
+			case 'P':
 				break;
 			}
 		}
 	}
+
 	return enemyCount;
 }
 
-int tron::LoadLevel3(dae::Scene& scene)
-{
-	const float tileSize = 32.f;
-
-	
-	int enemyCount = 0;
-	for (int yPos = 0; yPos < static_cast<int>(s_Level3.size()); ++yPos)
-	{
-		for (int xPos = 0; xPos < static_cast<int>(s_Level3[yPos].size()); ++xPos)
-		{
-			glm::vec2 pos{
-				xPos * tileSize,
-				yPos * tileSize
-			};
-
-			switch (s_Level3[yPos][xPos])
-			{
-			case '#':
-				CreateWall(scene, pos);
-				break;
-			case 'E':
-				CreateEnemyTank(scene, pos, s_Level3);
-				enemyCount++;
-				break;
-			case 'R':
-				CreateEnemyRecognizer(scene, pos, s_Level3);
-				enemyCount++;
-				break;
-			}
-		}
-	}
-	return enemyCount;
-}
 
 void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
 {
@@ -221,6 +156,27 @@ void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
 
 	wall->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f }, dae::GameCollisionLayers::Wall);
 	scene.Add(std::move(wall));
+}
+
+glm::vec2 tron::GetPlayerStartPos(const std::vector<std::string>& level)
+{
+	const float tileSize = 32.f;
+
+	for (int y = 0; y < static_cast<int>(level.size()); ++y)
+	{
+		for (int x = 0; x < static_cast<int>(level[y].size()); ++x)
+		{
+			if (level[y][x] == 'P')
+			{
+				return glm::vec2{
+					x * tileSize,
+					y * tileSize
+				};
+			}
+		}
+	}
+
+	return glm::vec2{ 448.f, 192.f };
 }
 
 void tron::CreateEnemyTank(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level)
@@ -303,7 +259,7 @@ PlayerObjects  tron::CreatePlayer(dae::Scene& scene, glm::vec2 position, const s
 
 	player->AddComponent<dae::VelocityComponent>(120.f);
 	player->AddComponent<dae::CollisionComponent>(
-		glm::vec2{ 32.f, 32.f },
+		glm::vec2{ 29.f, 29.f },
 		dae::GameCollisionLayers::Tank);
 	player->AddComponent<dae::PlayerTouchHitComponent>(level);
 	player->AddComponent<dae::TankComponent>(tankSize);

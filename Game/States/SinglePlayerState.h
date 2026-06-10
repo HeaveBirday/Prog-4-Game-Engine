@@ -2,7 +2,7 @@
 #include "GameState.h"
 #include <IEventListener.h>
 #include <GameObject.h>
-
+#include <Components/TextComponent.h>
 class SinglePlayerState final : public GameState, public dae::IEventListener
 {
 public:
@@ -14,6 +14,9 @@ public:
 
 	void OnEvent(const dae::Event& event) override;
 private:
+	
+
+	void UpdateHud();
 	void LoadLevel();
 	void BindPlayerInput(dae::GameObject* player, dae::GameObject* turret);
 	void SkipLevel() override;
@@ -22,4 +25,7 @@ private:
 	bool m_ShouldResetLevel{};
 	bool m_ShouldGameOver{};
 	bool m_ShouldLoadNextLevel{};
+
+	dae::TextComponent* m_ScoreText{};
+	dae::TextComponent* m_LivesText{};
 };

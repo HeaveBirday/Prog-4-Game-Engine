@@ -10,6 +10,7 @@ namespace dae
         void LoadSound(sound_id, const std::string&) override
         {
         }
+		void PlayLooping(sound_id, float) override {}
         void SetMuted(bool) override {}
         bool IsMuted() const override { return true; }
         void ToggleMuted() override {}

@@ -101,3 +101,17 @@ void dae::InputManager::ClearCommands()
 	m_ControllerBindings.clear();
 }
 
+bool dae::InputManager::IsPressed(ControllerInput::Button button) const
+{
+	return !m_Controllers.empty() && m_Controllers[0]->IsButtonPressed(button);
+}
+
+bool dae::InputManager::IsHeld(ControllerInput::Button button) const
+{
+	return !m_Controllers.empty() && m_Controllers[0]->IsButtonHeld(button);
+}
+
+bool dae::InputManager::IsReleased(ControllerInput::Button button) const
+{
+	return !m_Controllers.empty() && m_Controllers[0]->IsButtonReleased(button);
+}
