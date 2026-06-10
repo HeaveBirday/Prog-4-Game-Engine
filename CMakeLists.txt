@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(TronTanks)
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")
@@ -9,7 +9,7 @@ if(EMSCRIPTEN)
   set(TARGET_NAME minigin_web)
   set(TARGET_PARAM )
 else()
-  set(TARGET_NAME minigin)
+  set(TARGET_NAME TronTanks)
   set(TARGET_PARAM WIN32)
 endif()
 
@@ -105,16 +105,38 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
  "Game/Component/TankComponent.cpp"
  "Game/Commands/MoveCommand.h" 
  "Game/Commands/MoveCommand.cpp" 
- "Game/GameCollisionLayer.h"  "Game/Component/ObjectTypeComponent.h" "Game/Component/HealthComponent.h" "Game/Component/ScoreComponent.h" "Game/Component/PlayerScoreComponent.h" "Game/TronEvents.h" "Game/Component/LivesComponent.h" "Game/Component/WallCollisionComponent.h" "Game/Component/WallCollisionComponent.cpp" "Game/Commands/RotateTurretCommand.h" "Game/Commands/RotateTurretCommand.cpp" "Game/LevelBuilder.h" "Game/LevelBuilder.cpp" "Game/Component/EnemyAIComponent.h" "Game/Component/EnemyAIComponent.cpp" "Game/GameSession.h" "Game/GameSession.cpp" "Game/States/GameOverState.h" "Game/States/GameOverState.cpp" "Game/Commands/SkipLevelCommand.h" "Game/Component/PlayerTouchHitComponent.h" "Game/Component/PlayerTouchHitComponent.cpp" "Minigin/Commands/ToggleMuteCommand.h" "Game/HighscoreService.h" "Game/HighscoreService.cpp" "Game/Commands/GoToMainMenuCommand.h" "Game/Commands/GoToMainMenuCommand.cpp")
+ "Game/GameCollisionLayer.h" 
+ "Game/Component/ObjectTypeComponent.h" 
+ "Game/Component/HealthComponent.h" 
+ "Game/Component/ScoreComponent.h"
+ "Game/Component/PlayerScoreComponent.h"
+ "Game/TronEvents.h" 
+ "Game/Component/LivesComponent.h"
+ "Game/Component/WallCollisionComponent.h" 
+ "Game/Component/WallCollisionComponent.cpp" 
+ "Game/Commands/RotateTurretCommand.h"
+ "Game/Commands/RotateTurretCommand.cpp" 
+ "Game/LevelBuilder.h"
+ "Game/LevelBuilder.cpp"
+ "Game/Component/EnemyAIComponent.h"
+ "Game/Component/EnemyAIComponent.cpp"
+ "Game/GameSession.h"
+ "Game/GameSession.cpp"
+ "Game/States/GameOverState.h"
+ "Game/States/GameOverState.cpp" 
+ "Game/Commands/SkipLevelCommand.h"
+ "Game/Component/PlayerTouchHitComponent.h"
+ "Game/Component/PlayerTouchHitComponent.cpp"
+ "Minigin/Commands/ToggleMuteCommand.h" 
+ "Game/HighscoreService.h"
+ "Game/HighscoreService.cpp" 
+ "Game/Commands/GoToMainMenuCommand.h" 
+ "Game/Commands/GoToMainMenuCommand.cpp")
 
 #What Directories will be included and be visible in the libraries 
 target_include_directories(${ENGINE_NAME} 
     PUBLIC ${CMAKE_SOURCE_DIR}/Minigin/
 )
-
-
-
-
 
 # enable c++20 features
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_23)
