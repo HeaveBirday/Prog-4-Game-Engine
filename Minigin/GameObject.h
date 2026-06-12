@@ -15,15 +15,17 @@ namespace dae
 	class GameObject final
 	{
 	private:
-		std::shared_ptr<Texture2D> m_texture{};
 		bool m_IsDestroyed{false};
+		//Cached pointer to the mandatory TransformComponent for quick access. Since every GameObject must have one, we can safely assume it exists after construction.
 
 		TransformComponent* m_TransformPtr{ nullptr };
-
+		// Components are stored as unique_ptrs because the GameObject owns them
 		std::vector<std::unique_ptr<Component>> m_components;
+		// Components are removed after Update/FixedUpdate to avoid erasing while iterating
 		std::vector<size_t> m_PendingRemovals{};
 		void ProcessPendingRemovals();
 
+		// Raw pointers are used here because the Scene owns the GameObjects, the parent-child system only links objects together
 		GameObject* m_parent{ nullptr };
 		std::vector<GameObject*> m_children{};
 		void AddChild_Internally(GameObject* child);
@@ -38,7 +40,6 @@ namespace dae
 		void FixedUpdate(float fixedDt);
 		void Render() const;
 		
-		void SetTexture(const std::string& filename);
 
 		bool IsDestroyed() const { return m_IsDestroyed; }
 
@@ -73,6 +74,9 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	};
+
+	
+	// Creates a new component, assigns this GameObject as its owner,stores it in the component list, and returns a reference to it. Only one TransformComponent can be added per GameObject.
 	template<std::derived_from<Component> T, typename... Args> requires std::constructible_from<T, GameObject*, Args...>
 	T& GameObject::AddComponent(Args&&... args)
 	{
@@ -96,6 +100,7 @@ namespace dae
 		}
 		return ref;
 	}
+	// Searches for and returns the first component of the requested type, returns nullptr if the GameObject does not contain that component
 	template<typename T>
 	T* GameObject::GetComponent() const
 	{
@@ -108,13 +113,14 @@ namespace dae
 		}
 		return nullptr;
 	}
-
+	// Checks whether this GameObject contains a component of the requested type
 	template<typename T>
 	bool GameObject::HasComponent() const
 	{
 		return GetComponent<T>() != nullptr;
 	}
 
+	// Marks a component for removal, actual removal happens after the update loop to avoid iterator invalidation
 	template<typename T>
 	bool GameObject::RemoveComponent()
 	{

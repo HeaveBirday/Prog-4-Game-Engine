@@ -3,6 +3,7 @@
 #include <IEventListener.h>
 #include <GameObject.h>
 #include <Components/TextComponent.h>
+#include <memory>
 class SinglePlayerState final : public GameState, public dae::IEventListener
 {
 public:
@@ -18,7 +19,7 @@ private:
 
 	void UpdateHud();
 	void LoadLevel();
-	void BindPlayerInput(dae::GameObject* player, dae::GameObject* turret);
+	void BindPlayerInput(dae::GameObject* player, dae::GameObject* turretPtr);
 	void SkipLevel() override;
 	int m_EnemiesAlive{};
 
@@ -28,4 +29,5 @@ private:
 
 	dae::TextComponent* m_ScoreText{};
 	dae::TextComponent* m_LivesText{};
+	std::shared_ptr<dae::Font> m_HudFont{};
 };

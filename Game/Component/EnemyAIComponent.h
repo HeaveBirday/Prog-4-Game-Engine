@@ -12,7 +12,7 @@ namespace dae
 	class EnemyAIComponent final : public Component
 	{
 	public:
-		explicit EnemyAIComponent(GameObject* owner, const std::vector<std::string>& level);
+		explicit EnemyAIComponent(GameObject* owner, const std::vector<std::string>& level, float speed);
 		void Update(float dt) override;
 
 	private:
@@ -20,6 +20,7 @@ namespace dae
 		bool IsWallAtTile(int x, int y) const;
 		glm::ivec2 GetCurrentTile() const;
 		const std::vector<std::string>& m_Level;
+		float m_Speed;
 
 		ShooterComponent* m_Shooter{};
 		TransformComponent* m_Transform{};
@@ -28,7 +29,6 @@ namespace dae
 		glm::vec2 m_TargetPosition{};
 		bool m_IsMovingToTile{false};
 		
-		float m_Speed{ 120.f };
 		float m_TileSize{ 32.f };
 
 		float m_ShootTimer{};

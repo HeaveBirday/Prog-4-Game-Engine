@@ -18,6 +18,7 @@ namespace dae
 		void SetMuted(bool muted) override;
 		bool IsMuted() const override;
 		void ToggleMuted() override;
+		void StopLooping() override;
 	private:
 
 		class Impl;

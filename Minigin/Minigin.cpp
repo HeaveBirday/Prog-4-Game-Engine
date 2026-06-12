@@ -86,9 +86,6 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 
 dae::Minigin::~Minigin()
 {
-	
-
-
 	dae::ServiceLocator::DestroySoundSystem();
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);

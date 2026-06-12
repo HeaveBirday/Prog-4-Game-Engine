@@ -21,8 +21,14 @@ namespace tron
 	void CreateWall(dae::Scene& scene, glm::vec2 position);
 
 	glm::vec2 GetPlayerStartPos(const std::vector<std::string>& level);
+	glm::vec2 GetPlayerTwoStartPos(const std::vector<std::string>& level);
+	glm::vec2 GetVersusPlayerStartPos(const std::vector<std::string>& level);
+
 	void CreateEnemyTank(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level);
 	void CreateEnemyRecognizer(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level);
 	void CreateDiamond(dae::Scene& scene, glm::vec2 pos);
 	PlayerObjects  CreatePlayer(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level);
+	PlayerObjects CreatePlayerTwo(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level);
+	PlayerObjects CreateVersusPlayer(dae::Scene& scene, glm::vec2 position);
+
 }

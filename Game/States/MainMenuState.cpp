@@ -11,13 +11,17 @@
 #include "InputManager.h"
 #include <SDL3/SDL.h>
 #include "../GameSession.h"
+#include <ServiceLocator.h>
+#include "../SoundIds.h"
 extern GameStateManager g_GameStateManager;
 void MainMenuState::OnEnter()
 {
 	GameSession::Reset();
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-	
+
+	dae::ServiceLocator::GetSoundSystem().PlayLooping(dae::SoundIds::BackgroundMusic, 0.3f);
+
 	{
 		auto go = std::make_unique<dae::GameObject>();
 		go->SetPosition(300.f, 150.f);

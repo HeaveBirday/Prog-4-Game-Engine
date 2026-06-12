@@ -6,9 +6,11 @@
 #include <glm/geometric.hpp>
 #include "TankComponent.h"
 
-dae::EnemyAIComponent::EnemyAIComponent(GameObject* owner, const std::vector<std::string>& level)
-	: Component(owner), 
+dae::EnemyAIComponent::EnemyAIComponent(GameObject* owner, const std::vector<std::string>& level, float speed)
+	:
+	Component(owner), 
 	m_Level(level),
+	m_Speed(speed),
 	m_Shooter(owner->GetComponent<ShooterComponent>()),
 	m_Transform(owner->GetComponent<TransformComponent>()),
 	m_Tank(owner->GetComponent<TankComponent>())

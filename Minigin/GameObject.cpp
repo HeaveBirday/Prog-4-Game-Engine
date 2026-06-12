@@ -10,7 +10,7 @@ dae::GameObject::GameObject()
 }
 
 dae::GameObject::~GameObject() = default;
-
+// Safely removes components that were queued for deletion during Update()
 void dae::GameObject::ProcessPendingRemovals()
 {
 	if (m_PendingRemovals.empty())
@@ -27,7 +27,7 @@ void dae::GameObject::ProcessPendingRemovals()
 	}
 	m_PendingRemovals.clear();
 }
-
+// Updates all components attached to this GameObject, processes queued component removals, then updates its children
 void dae::GameObject::Update(float dt )
 {
 	for (auto& c : m_components)
@@ -39,7 +39,7 @@ void dae::GameObject::Update(float dt )
 		if (child && !child->IsDestroyed())
 			child->Update(dt);
 }
-
+// fixed timestep version of Update
 void dae::GameObject::FixedUpdate(float fixedDt)
 {
 	for (auto& c : m_components)
@@ -51,7 +51,7 @@ void dae::GameObject::FixedUpdate(float fixedDt)
 		if (child && !child->IsDestroyed())
 			child->FixedUpdate(fixedDt);
 }
-//TODO FIX LATER: RENDERER 
+// Renders all components attached to this GameObject and its children
 void dae::GameObject::Render() const
 {
 	for (const auto& c : m_components)
@@ -62,10 +62,6 @@ void dae::GameObject::Render() const
 			child->Render();
 }
 
-void dae::GameObject::SetTexture(const std::string& filename)
-{
-	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
-}
 void dae::GameObject::SetPosition(float x, float y)
 {
 	SetPosition(glm::vec2(x, y));
@@ -75,19 +71,21 @@ void dae::GameObject::SetPosition(glm::vec2 vectorPos)
 	if (m_TransformPtr)
 		m_TransformPtr->SetPosition(vectorPos);
 }
+// Checks if the child is already in the list before adding to prevent duplicates, used by SetParent to maintain parent-child relationships
 void dae::GameObject::AddChild_Internally(GameObject* child)
 {
 	if (!child) return;
 	if (std::find(m_children.begin(), m_children.end(), child) == m_children.end())
 		m_children.push_back(child);
 }
-
+// Checks if the child is in the list before removing, used by SetParent to maintain parent-child relationships
 void dae::GameObject::RemoveChild_Internally(GameObject* child)
 {
 	auto it = std::find(m_children.begin(), m_children.end(), child);
 	if (it != m_children.end())
 		m_children.erase(it);
 }
+// Sets a new parent for this GameObject, optionally keeping the world position unchanged. Prevents cycles in the hierarchy.
 void dae::GameObject::SetParent(GameObject* newParent, bool keepWorld)
 {
 	if (newParent == this) return;
@@ -120,6 +118,7 @@ void dae::GameObject::SetParent(GameObject* newParent, bool keepWorld)
 	if (keepWorld && m_TransformPtr)
 		m_TransformPtr->SetWorldPosition(oldX, oldY);
 }
+// marks GameObject and all its children as destroyed, they will be removed from the scene at the end of the current update loop. This is a recursive function that ensures the entire subtree is marked for destruction
 void dae::GameObject::Destroy()
 {
 	m_IsDestroyed = true;

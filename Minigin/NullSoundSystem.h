@@ -14,5 +14,7 @@ namespace dae
         void SetMuted(bool) override {}
         bool IsMuted() const override { return true; }
         void ToggleMuted() override {}
+        void StopLooping() override {}
+
     };
 }

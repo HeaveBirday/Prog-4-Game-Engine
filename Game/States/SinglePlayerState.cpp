@@ -23,6 +23,8 @@
 #include "GameOverState.h"
 #include "../Commands/SkipLevelCommand.h"
 
+#include <ServiceLocator.h>
+#include "../SoundIds.h"
 extern GameStateManager g_GameStateManager;
 
 void SinglePlayerState::OnEnter()
@@ -37,7 +39,12 @@ void SinglePlayerState::OnExit()
 {
 	dae::EventManager::GetInstance().RemoveListener(this);
 	dae::InputManager::GetInstance().ClearCommands();
+	m_ScoreText = nullptr;
+	m_LivesText = nullptr;
+
 	dae::SceneManager::GetInstance().RemoveAll();
+
+	m_HudFont.reset();
 }
 
 void SinglePlayerState::HandleInput()
@@ -62,6 +69,7 @@ void SinglePlayerState::Update(float )
 
 		SDL_Log("Go to GameOverState later");
 		g_GameStateManager.SetState(std::make_unique<GameOverState>());
+		return;
 	}
 	if (m_ShouldLoadNextLevel)
 	{
@@ -75,6 +83,7 @@ void SinglePlayerState::Update(float )
 
 		LoadLevel();
 	}
+	UpdateHud();
 }
 
 void SinglePlayerState::OnEvent(const dae::Event& event)
@@ -97,6 +106,7 @@ void SinglePlayerState::OnEvent(const dae::Event& event)
 
 		if (m_EnemiesAlive <= 0)
 		{
+			dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::NewLevel, 1.0f);
 			m_ShouldLoadNextLevel = true;
 		}
 	}
@@ -115,10 +125,9 @@ void SinglePlayerState::UpdateHud()
 
 void SinglePlayerState::LoadLevel()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene();
-	auto go = std::make_unique<dae::GameObject>();
+	auto& scene = dae::SceneManager::GetInstance().CreateScene();	
 
-	
+
 
 	// Game Manager to handle global game systems 
 	auto gameManager = std::make_unique<dae::GameObject>();
@@ -150,16 +159,15 @@ void SinglePlayerState::LoadLevel()
 	SDL_Log("Enemies alive: %d", m_EnemiesAlive);
 
 	//HUD INFO
-	auto hudFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-
+	m_HudFont = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 	auto scoreObj = std::make_unique<dae::GameObject>();
 	scoreObj->SetPosition(20.f, 20.f);
-	m_ScoreText = &scoreObj->AddComponent<dae::TextComponent>(hudFont.get(),SDL_Color{ 255, 255, 255, 255 });
+	m_ScoreText = &scoreObj->AddComponent<dae::TextComponent>(m_HudFont.get(),SDL_Color{ 255, 255, 255, 255 });
 	scene.Add(std::move(scoreObj));
 
 	auto livesObj = std::make_unique<dae::GameObject>();
 	livesObj->SetPosition(180.f, 20.f);
-	m_LivesText = &livesObj->AddComponent<dae::TextComponent>(hudFont.get(),SDL_Color{ 255, 255, 255, 255 });
+	m_LivesText = &livesObj->AddComponent<dae::TextComponent>(m_HudFont.get(),SDL_Color{ 255, 255, 255, 255 });
 	scene.Add(std::move(livesObj));
 
 	UpdateHud();

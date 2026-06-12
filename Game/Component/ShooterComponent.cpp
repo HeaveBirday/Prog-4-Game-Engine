@@ -30,8 +30,7 @@ void dae::ShooterComponent::Shoot()
 	if (!transform) return; 
 	//Setting up the direction and spawn position of the bullet based on the rotation of the tank
 	glm::vec2 bulletDirection{};
-	auto* objectType = GetOwner().GetComponent<ObjectTypeComponent>();
-	if (objectType && objectType->GetType() == ObjectType::Player)
+	if (m_UseTurretDirection)
 	{
 		bulletDirection = m_TankComponent->GetTurretDirection();
 	}

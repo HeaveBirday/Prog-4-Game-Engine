@@ -5,7 +5,8 @@
 #include "../TronEvents.h"
 #include <SDL3/SDL_log.h>
 #include "../GameSession.h"
-
+#include <ServiceLocator.h>
+#include "../SoundIds.h"
 
 class LivesComponent final : public dae::Component, public dae::IEventListener
 {
@@ -23,12 +24,14 @@ public:
 	{
 		if (event.id == TronEventIds::PlayerHit)
 		{
+
 			GameSession::Lives--;
 			SDL_Log("Player hit! Lives remaining: %d", GameSession::Lives);
 
 			if (GameSession::Lives <= 0)
 			{
 				SDL_Log("Player has no more lives! Game Over!");
+				dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::GameOver, 1.0f);
 				dae::EventManager::GetInstance().QueueEvent({
 					TronEventIds::GameOver,
 					-1,
@@ -40,6 +43,9 @@ public:
 			else
 			{
 				SDL_Log("Reset current level");
+				dae::ServiceLocator::GetSoundSystem().StopLooping();
+				dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::PlayerHit, 0.4f);
+				dae::ServiceLocator::GetSoundSystem().PlayLooping(dae::SoundIds::BackgroundMusic, 0.2f);
 
 				dae::EventManager::GetInstance().QueueEvent({
 					TronEventIds::ResetLevel,

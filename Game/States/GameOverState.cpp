@@ -14,6 +14,9 @@
 #include "GameStateManager.h"
 #include "MainMenuState.h"
 #include <InputManager.h>
+
+#include <ServiceLocator.h>
+#include "../SoundIds.h"
 extern GameStateManager g_GameStateManager;
 
 void GameOverState::OnEnter()
@@ -23,8 +26,11 @@ void GameOverState::OnEnter()
 	m_WasDownPressed = false;
 	m_WasEnterPressed = false;
 
+	dae::ServiceLocator::GetSoundSystem().StopLooping();
+	dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::GameOver, 1.0f);
+
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
+	m_Font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 32);
 
 	//Loading highscores and adding the current score if it qualifies
 	m_HighscoreService.Load();
@@ -35,14 +41,14 @@ void GameOverState::OnEnter()
 	//Setting the title of the game over screen
 	auto title = std::make_unique<dae::GameObject>();
 	title->SetPosition(400.f, 50.f);
-	auto& titleText = title->AddComponent<dae::TextComponent>(font.get(), SDL_Color{ 255, 0, 0, 255 });
+	auto& titleText = title->AddComponent<dae::TextComponent>(m_Font.get(), SDL_Color{ 255, 0, 0, 255 });
 	titleText.SetText("GAME OVER");
 	scene.Add(std::move(title));
 
 	// Displaying the final score of the player
 	auto scoreTextObj = std::make_unique<dae::GameObject>();
 	scoreTextObj->SetPosition(20.f, 100.f);
-	auto& scoreText = scoreTextObj->AddComponent<dae::TextComponent>(font.get(), SDL_Color{ 255,255,255,255 });
+	auto& scoreText = scoreTextObj->AddComponent<dae::TextComponent>(m_Font.get(), SDL_Color{ 255,255,255,255 });
 
 	scoreText.SetText("Final Score: " + std::to_string(GameSession::Score));
 	scene.Add(std::move(scoreTextObj));
@@ -50,7 +56,7 @@ void GameOverState::OnEnter()
 	auto nameObj = std::make_unique<dae::GameObject>();
 	nameObj->SetPosition(20.f, 140.f);
 
-	m_NameText = &nameObj->AddComponent<dae::TextComponent>(font.get(), SDL_Color{ 255,255,255,255 });
+	m_NameText = &nameObj->AddComponent<dae::TextComponent>(m_Font.get(), SDL_Color{ 255,255,255,255 });
 	UpdateNameText();
 
 	scene.Add(std::move(nameObj));
@@ -61,7 +67,7 @@ void GameOverState::OnEnter()
 
 	auto highscoreTitleObj = std::make_unique<dae::GameObject>();
 	highscoreTitleObj->SetPosition(600.f, 100.f);
-	auto& titleComp = highscoreTitleObj->AddComponent<dae::TextComponent>(font.get(),SDL_Color{ 255,255,255,255 });
+	auto& titleComp = highscoreTitleObj->AddComponent<dae::TextComponent>(m_Font.get(),SDL_Color{ 255,255,255,255 });
 	titleComp.SetText("HIGHSCORES:");
 	scene.Add(std::move(highscoreTitleObj));
 
@@ -72,7 +78,7 @@ void GameOverState::OnEnter()
 		auto lineObj = std::make_unique<dae::GameObject>();
 		lineObj->SetPosition(700.f, yPos);
 
-		auto& lineText = lineObj->AddComponent<dae::TextComponent>(font.get(),SDL_Color{ 255,255,255,255 });
+		auto& lineText = lineObj->AddComponent<dae::TextComponent>(m_Font.get(),SDL_Color{ 255,255,255,255 });
 
 		m_HighscoreEntries.push_back(&lineText);
 
@@ -90,9 +96,11 @@ void GameOverState::OnExit()
 {
 	dae::SceneManager::GetInstance().RemoveAll();
 	m_NameText = nullptr;
-	m_ScoreSaved = false;
 	m_HighscoreText = nullptr;
 	m_HighscoreEntries.clear();
+
+	m_Font.reset();
+	m_ScoreSaved = false;
 }
 
 void GameOverState::HandleInput()
@@ -160,7 +168,7 @@ void GameOverState::UpdateHighscoreText()
 		}
 		else
 		{
-			m_HighscoreEntries[i]->SetText("");
+			m_HighscoreEntries[i]->SetText(" ");
 		}
 	}
 }

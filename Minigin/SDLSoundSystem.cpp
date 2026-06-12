@@ -5,13 +5,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <thread>
-#include <atomic>
 #include <unordered_map>
 #include <string>
 #include <filesystem>
 #include <SDL3_mixer/SDL_mixer.h>
 #include <SDL3/SDL_audio.h>
 #include <memory>
+#include <vector>
 namespace dae
 {
 	struct SoundRequest
@@ -87,16 +87,23 @@ namespace dae
 			else
 			{
 				SDL_Log("Mixer device created successfully");
+
 			}
-			m_pTrack.reset(MIX_CreateTrack(m_pMixer.get()));
-			if (!m_pTrack)
+			constexpr int amountOfSfxTracks{ 8 };
+
+			for (int idx{}; idx < amountOfSfxTracks; ++idx)
 			{
-				SDL_Log("Failed to create track: %s", SDL_GetError());
+				TrackPtr track{ MIX_CreateTrack(m_pMixer.get()) };
+
+				if (!track)
+				{
+					SDL_Log("Failed to create SFX track: %s", SDL_GetError());
+					continue;
+				}
+
+				m_pSfxTracks.push_back(std::move(track));
 			}
-			else
-			{
-				SDL_Log("Track created successfully");
-			}
+
 			m_pLoopingTrack.reset(MIX_CreateTrack(m_pMixer.get()));
 			if (!m_pLoopingTrack)
 			{
@@ -127,10 +134,13 @@ namespace dae
 				m_SoundThread.join();
 			}
 
-			if (m_pTrack)
+			for (auto& track : m_pSfxTracks)
 			{
-				MIX_StopTrack(m_pTrack.get(), 0);
-				MIX_SetTrackAudio(m_pTrack.get(), nullptr);
+				if (track)
+				{
+					MIX_StopTrack(track.get(), 0);
+					MIX_SetTrackAudio(track.get(), nullptr);
+				}
 			}
 
 			if (m_pLoopingTrack)
@@ -140,13 +150,25 @@ namespace dae
 			}
 
 			m_Sounds.clear();
-			m_pTrack.reset();
+			m_pSfxTracks.clear();
 			m_pLoopingTrack.reset();
 			MIX_DestroyMixer(m_pMixer.release());
 			m_pMixer.reset();
 			MIX_Quit();
 			SDL_QuitSubSystem(SDL_INIT_AUDIO);
 			SDL_Log("SDLSoundSystem shutdown complete");
+		}
+		MIX_Track* FindFreeSfxTrack()
+		{
+			for (auto& track : m_pSfxTracks)
+			{
+				if (!MIX_TrackPlaying(track.get()))
+				{
+					return track.get();
+				}
+			}
+
+			return nullptr;
 		}
 		void Play(sound_id id, float volume)
 		{
@@ -179,7 +201,6 @@ namespace dae
 				SDL_Log("Failed to set looping track audio for sound id %d: %s", id, SDL_GetError());
 				return;
 			}
-			MIX_SetTrackAudio(m_pLoopingTrack.get(), it->second.get());
 			MIX_SetTrackGain(m_pLoopingTrack.get(), volume);
 
 			SDL_PropertiesID loopProperties = SDL_CreateProperties();
@@ -196,6 +217,16 @@ namespace dae
 			SDL_DestroyProperties(loopProperties);
 
 		}
+		void StopLooping()
+		{
+			if (m_pLoopingTrack)
+			{
+				MIX_StopTrack(m_pLoopingTrack.get(), 0);
+				MIX_SetTrackAudio(m_pLoopingTrack.get(), nullptr);
+			}
+
+			m_HasLoopingSound = false;
+		}
 		void PlaySoundInternal(const SoundRequest& request)
 		{
 			auto it = m_Sounds.find(request.id);
@@ -205,23 +236,25 @@ namespace dae
 				return;
 			}
 
-			if (!m_pTrack)
+			MIX_Track* track = FindFreeSfxTrack();
+
+			if (!track)
 			{
-				SDL_Log("No track available to play sound with id: %d", request.id);
+				SDL_Log("No free SFX track available");
 				return;
 			}
 
-			if (!MIX_SetTrackAudio(m_pTrack.get(), it->second.get()))
+			if (!MIX_SetTrackAudio(track, it->second.get()))
 			{
 				SDL_Log("Failed to set track audio for sound id %d: %s", request.id, SDL_GetError());
 				return;
 			}
-			MIX_SetTrackGain(m_pTrack.get(), request.volume);
 
-			if (!MIX_PlayTrack(m_pTrack.get(), 0))
+			MIX_SetTrackGain(track, request.volume);
+
+			if (!MIX_PlayTrack(track, 0))
 			{
 				SDL_Log("Failed to play sound id %d: %s", request.id, SDL_GetError());
-				return;
 			}
 
 		}
@@ -317,7 +350,7 @@ namespace dae
 		std::condition_variable m_ConditionVariable;
 		std::unordered_map<sound_id, AudioPtr> m_Sounds;
 		MixerPtr m_pMixer{};
-		TrackPtr m_pTrack{};
+		std::vector<TrackPtr> m_pSfxTracks;
 		TrackPtr m_pLoopingTrack{};
 		bool m_IsMuted{};
 		sound_id m_CurrentLoopingSound{};
@@ -343,6 +376,11 @@ namespace dae
 	void SDLSoundSystem::ToggleMuted()
 	{
 		m_pImpl->ToggleMuted();
+	}
+
+	void SDLSoundSystem::StopLooping()
+	{
+		m_pImpl->StopLooping();
 	}
 
 	SDLSoundSystem::~SDLSoundSystem() = default;

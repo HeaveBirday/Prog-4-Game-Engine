@@ -3,7 +3,8 @@
 #include "../HighscoreService.h"
 #include <string>
 #include <vector>
-
+#include <memory>
+#include <Font.h>
 namespace dae
 {
 	class TextComponent;
@@ -41,4 +42,5 @@ private:
 	bool m_WasUpPressed{ false };
 	bool m_WasDownPressed{ false };
 	bool m_WasEnterPressed{ false };
+	std::shared_ptr<dae::Font> m_Font{};
 };

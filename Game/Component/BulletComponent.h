@@ -47,5 +47,6 @@ namespace dae
 		int m_BounceCount{};
 		int m_MaxBounces{ 5 };
 		bool m_HasBouncedThisFrame{};
+		float m_LifeTime{ 3.f };
 	};
 }

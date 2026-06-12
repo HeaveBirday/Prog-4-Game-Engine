@@ -8,6 +8,8 @@ namespace dae
     {
     public:
         Component(GameObject* owner) : m_owner{ owner  } {}
+        // Base class Component, Components are owned by a GameObject and can hook into the engine update/render loop.
+
         virtual ~Component() = default;
 
         virtual void FixedUpdate(float) {}

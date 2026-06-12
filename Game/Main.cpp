@@ -25,10 +25,13 @@ static void load()
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());
 	auto& soundSystem = dae::ServiceLocator::GetSoundSystem();
 	soundSystem.LoadSound(dae::SoundIds::GunShot, dae::ResourceManager::GetInstance().GetFullPath("GunShot.wav"));
-	//soundSystem.LoadSound(dae::SoundIds::BackgroundMusic, dae::ResourceManager::GetInstance().GetFullPath("BackgroundMusic.wav"));
-	g_GameStateManager.SetState(std::make_unique<MainMenuState>());
+	soundSystem.LoadSound(dae::SoundIds::BackgroundMusic, dae::ResourceManager::GetInstance().GetFullPath("MusicAudio.wav"));
+	soundSystem.LoadSound(dae::SoundIds::GameOver, dae::ResourceManager::GetInstance().GetFullPath("GameOver.wav"));
+	soundSystem.LoadSound(dae::SoundIds::PlayerHit, dae::ResourceManager::GetInstance().GetFullPath("PlayerHit.wav"));
+	soundSystem.LoadSound(dae::SoundIds::EnemyHit, dae::ResourceManager::GetInstance().GetFullPath("EnemyHit.wav"));
+	soundSystem.LoadSound(dae::SoundIds::NewLevel, dae::ResourceManager::GetInstance().GetFullPath("NewLevel.wav"));
 
-	soundSystem.PlayLooping(dae::SoundIds::GunShot, 0.1f);
+	g_GameStateManager.SetState(std::make_unique<MainMenuState>());
 }
 
 int main(int, char* [])

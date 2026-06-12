@@ -16,5 +16,6 @@ namespace dae
         virtual void SetMuted(bool muted) = 0;
         virtual bool IsMuted() const = 0;
         virtual void ToggleMuted() = 0;
+        virtual void StopLooping() = 0;
     };
 }

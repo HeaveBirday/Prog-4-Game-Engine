@@ -8,12 +8,19 @@
 #include <cmath>
 #include <SDL3/SDL_log.h>
 #include <EventManager.h>
-void dae::BulletComponent::Update(float)
+void dae::BulletComponent::Update(float dt)
 {
 	m_HasBouncedThisFrame = false;
 
 	if (!m_Transform) return;
 	m_PreviousPos = m_Transform->GetWorldPosition();
+
+	m_LifeTime -= dt;
+	if (m_LifeTime <= 0.f)
+	{
+		GetOwner().Destroy();
+		return;
+	}
 }
 
 void dae::BulletComponent::OnEvent(const Event& event)
@@ -78,7 +85,6 @@ void dae::BulletComponent::OnEvent(const Event& event)
 
 void dae::BulletComponent::EnemyHit(GameObject* otherObject)
 {
-		//TODO Could do this in an event system if I have time over to polish this
 		auto health = otherObject->GetComponent<HealthComponent>();
 		if (health)
 		{
@@ -93,8 +99,8 @@ void dae::BulletComponent::EnemyHit(GameObject* otherObject)
 							TronEventIds::EnemyDestroyed,
 							-1,
 							score->GetScoreValue(),
-							nullptr,
-							nullptr
+							otherObject,
+							&GetOwner()
 						});
 
 					SDL_Log("Adding score: %d", score->GetScoreValue());
