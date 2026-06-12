@@ -119,7 +119,7 @@ void CoopState::UpdateHud()
 	if (m_LivesText)
 		m_LivesText->SetText("Lives: " + std::to_string(GameSession::Lives));
 }
-
+// The same as the SinglePlayerState, loads in a second player and binds that one to the controller
 void CoopState::LoadLevel()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();

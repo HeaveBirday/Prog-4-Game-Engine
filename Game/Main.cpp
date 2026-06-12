@@ -19,7 +19,7 @@
 namespace fs = std::filesystem;
 
 GameStateManager g_GameStateManager;
-
+// The load function is responsible for initializing the sound system, loading the necessary sound assets, and setting the initial game state to the main menu.
 static void load()
 {
 	dae::ServiceLocator::RegisterSoundSystem(std::make_unique<dae::SDLSoundSystem>());

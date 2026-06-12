@@ -1,7 +1,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-
 void dae::SceneManager::Render()
 {
 	for (const auto& scene : m_scenes)
@@ -20,6 +19,7 @@ dae::Scene& dae::SceneManager::CreateScene()
 	m_scenes.emplace_back(new Scene());
 	return *m_scenes.back();
 }
+// Returns the most recently created scene.
 
 dae::Scene& dae::SceneManager::GetActiveScene()
 {

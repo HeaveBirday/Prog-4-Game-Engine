@@ -6,6 +6,7 @@
 
 namespace dae
 {
+	// The Scene class manages a collection of GameObjects, providing functionality to add, remove, update, and render them. It also handles pending additions and removals to ensure safe iteration during updates.
 	class Scene final
 	{
 	public:

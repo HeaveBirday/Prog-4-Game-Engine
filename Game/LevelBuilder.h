@@ -2,6 +2,9 @@
 #include <glm/glm.hpp>
 #include <GameObject.h>
 
+// LevelBuilder.h declares functions for loading levels, creating game objects (walls, enemies, players) based on level data, and determining player starting positions.
+// The level data is represented as a vector of strings, where each character corresponds to a different type of object (e.g., wall, enemy, player spawn point).
+
 namespace dae
 {
 	class Scene;

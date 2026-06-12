@@ -7,6 +7,9 @@
 
 namespace dae
 {
+	// EventManager is a singleton class responsible for managing events and their listeners in the game
+    // Central event queue used to decouple systems.
+    // Objects can queue events, and listeners receive them later through ProcessEvents().
     class EventManager final : public Singleton<EventManager>
     {
     public:

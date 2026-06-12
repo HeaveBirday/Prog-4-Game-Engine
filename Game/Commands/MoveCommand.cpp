@@ -1,6 +1,4 @@
 #include "MoveCommand.h"
-#include "Components/TransformComponent.h"
-#include "GameObject.h"
 
 void MoveCommand::Execute(float)
 {

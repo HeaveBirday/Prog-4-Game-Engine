@@ -72,11 +72,11 @@ static const std::vector<std::string> s_Level1 =
 	"#__#__###_______#____#_________#",
 	"#__#__#_#_______#______________#",
 	"#_____#_#______R________###__###",
-	"#__P_V#_#####__________#__#____#",
+	"#__P__#_#####__________#__#____#",
 	"#__#__#_#####______#___####____#",
 	"#__#__#_#________D_#_________###",
 	"#_____###______#####___________#",
-	"#__________________________2___#",
+	"#__________________V_______2___#",
 	"#__###_________________##__#####",
 	"#__#_____#####____#_____#______#",
 	"#__#_____#_______#####__#______#",
@@ -100,7 +100,8 @@ const std::vector<std::string>& tron::GetLevel3()
 {
 	return s_Level3;
 }
-
+// The LoadLevel function reads the level layout from a vector of strings, where each character represents a different type of object (wall, enemy, player start position, etc.).
+// It creates the corresponding GameObjects and adds them to the scene. It also counts the number of enemies in the level and returns that count.
 int tron::LoadLevel(dae::Scene& scene, const std::vector<std::string>& level)
 {
 	const float tileSize = 32.f;
@@ -144,7 +145,7 @@ int tron::LoadLevel(dae::Scene& scene, const std::vector<std::string>& level)
 	return enemyCount;
 }
 
-
+// The CreateWall function creates a wall GameObject at the specified position, with the appropriate texture, collision component, and object type component. It then adds the wall to the scene.
 void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
 {
 	auto wallTexture = dae::ResourceManager::GetInstance().LoadTexture("Wall.png");
@@ -159,7 +160,8 @@ void tron::CreateWall(dae::Scene& scene, glm::vec2 position)
 	wall->AddComponent<dae::CollisionComponent>(glm::vec2{ 32.f, 32.f }, dae::GameCollisionLayers::Wall);
 	scene.Add(std::move(wall));
 }
-
+// The GetPlayerStartPos function scans the level layout for the character 'P', which represents the player's starting position. 
+// It returns the corresponding world coordinates based on the tile size. If no 'P' is found, it returns a default position.
 glm::vec2 tron::GetPlayerStartPos(const std::vector<std::string>& level)
 {
 	const float tileSize = 32.f;
@@ -180,7 +182,7 @@ glm::vec2 tron::GetPlayerStartPos(const std::vector<std::string>& level)
 
 	return glm::vec2{ 448.f, 192.f };
 }
-
+// The GetPlayerTwoStartPos function scans the level layout for the character '2', which represents the second player's starting position.
 glm::vec2 tron::GetPlayerTwoStartPos(const std::vector<std::string>& level)
 {
 	
@@ -202,7 +204,7 @@ glm::vec2 tron::GetPlayerTwoStartPos(const std::vector<std::string>& level)
 
 	return glm::vec2{ 512.f, 192.f };
 }
-
+// The GetVersusPlayerStartPos function scans the level layout for the character 'V', which represents the versus player's starting position.
 glm::vec2 tron::GetVersusPlayerStartPos(const std::vector<std::string>& level)
 {
 	
@@ -224,7 +226,8 @@ glm::vec2 tron::GetVersusPlayerStartPos(const std::vector<std::string>& level)
 
 	return glm::vec2{ 512.f, 192.f };
 }
-
+// The CreateEnemyTank function creates an enemy tank GameObject at the specified position, with the appropriate texture,
+// components for rendering, collision, health, score value, and AI behavior. It then adds the enemy tank to the scene.
 void tron::CreateEnemyTank(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level)
 {
 	auto blueTankTexture = dae::ResourceManager::GetInstance().LoadTexture("BlueTank.png");
@@ -242,10 +245,9 @@ void tron::CreateEnemyTank(dae::Scene& scene, glm::vec2 position, const std::vec
 	blueTank->AddComponent<dae::EnemyAIComponent>(level, 120.f);
 
 	scene.Add(std::move(blueTank));
-
-
 }
-
+// The CreateEnemyRecognizer function creates an enemy recognizer GameObject at the specified position, with the appropriate texture.
+// Basically an EnemyTank with higher speed and score value, but no shooting component
 void tron::CreateEnemyRecognizer(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level)
 {
 	auto recognizerTexture = dae::ResourceManager::GetInstance().LoadTexture("Recognizer.png");
@@ -263,7 +265,7 @@ void tron::CreateEnemyRecognizer(dae::Scene& scene, glm::vec2 position, const st
 
 	scene.Add(std::move(recognizer));
 }
-
+// The CreateDiamond function creates a diamond GameObject at the specified position, with the appropriate texture, collision component, and object type component. It then adds the diamond to the scene.
 void tron::CreateDiamond(dae::Scene& scene, glm::vec2 pos)
 {
 	auto diamondTexture = dae::ResourceManager::GetInstance().LoadTexture("Diamond.png");
@@ -279,7 +281,10 @@ void tron::CreateDiamond(dae::Scene& scene, glm::vec2 pos)
 	scene.Add(std::move(diamond));
 
 }
-
+// The CreatePlayer function creates the player tank GameObject at the specified position, with the appropriate texture, 
+// components for rendering, collision, health, score value, and shooting behavior. 
+// It also creates a turret GameObject as a child of the player tank, which visually represents the player's gun. 
+// Finally, it adds both the player tank and turret to the scene and returns pointers to them.
 PlayerObjects  tron::CreatePlayer(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level)
 {
 	auto tankTexture = dae::ResourceManager::GetInstance().LoadTexture("RedTank.png");
@@ -321,7 +326,7 @@ PlayerObjects  tron::CreatePlayer(dae::Scene& scene, glm::vec2 position, const s
 
 
 }
-
+// The CreatePlayerTwo function is similar to CreatePlayer, but it creates a second player tank with a different texture (green instead of red).
 PlayerObjects tron::CreatePlayerTwo(dae::Scene& scene, glm::vec2 position, const std::vector<std::string>& level)
 {
 	
@@ -362,6 +367,8 @@ PlayerObjects tron::CreatePlayerTwo(dae::Scene& scene, glm::vec2 position, const
 
 	return { playerPtr, turretPtr };
 }
+// The CreateVersusPlayer function is also similar to CreatePlayer and CreateEnemyTank. It pretty much creates an enemy tank, with a different texture and a turret GameObject, 
+// but it's meant to be controlled by a second player instead of AI. It also returns pointers to the player tank and turret for input binding.
 
 PlayerObjects tron::CreateVersusPlayer(dae::Scene& scene, glm::vec2 position)
 {

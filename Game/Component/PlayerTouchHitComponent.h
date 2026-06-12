@@ -5,6 +5,9 @@
 
 namespace dae
 {
+	// PlayerTouchHitComponent listens for collision events and checks if the player has collided with a specific tile type (e.g., a teleport tile).
+	// If such a collision is detected, it triggers a teleportation action for the player. 
+	// The component uses the level data to determine the tile type at the player's position and reacts accordingly.
 	class PlayerTouchHitComponent final : public Component, public IEventListener
 	{
 	public:

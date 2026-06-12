@@ -5,6 +5,9 @@
 
 namespace dae
 {
+	// This class is responsible for handling controller input using XInput 
+	// It keeps track of the current and previous state of the controller, as well as which buttons were pressed and released in the current frame
+	// It provides methods to check if a specific button is currently pressed, held down, or released.
 	class ControllerInput final
 	{
 	public:
@@ -35,7 +38,7 @@ namespace dae
 		
 	private:
 	
-
+		// PIMPL pattern to hide implementation details and reduce compile-time dependencies
 		class Impl;
 		std::unique_ptr<Impl> pImpl;
 	};

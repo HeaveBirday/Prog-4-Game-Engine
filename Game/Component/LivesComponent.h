@@ -8,6 +8,7 @@
 #include <ServiceLocator.h>
 #include "../SoundIds.h"
 
+// LivesComponent listens for PlayerHit events, reduces the player's lives, and triggers level reset or game over when necessary.
 class LivesComponent final : public dae::Component, public dae::IEventListener
 {
 public:
@@ -19,7 +20,7 @@ public:
 	{
 		dae::EventManager::GetInstance().RemoveListener(this);
 	}
-
+	// When a PlayerHit event is received, decrease lives and check for game over or level reset conditions
 	void OnEvent(const dae::Event& event) override
 	{
 		if (event.id == TronEventIds::PlayerHit)
@@ -32,6 +33,7 @@ public:
 			{
 				SDL_Log("Player has no more lives! Game Over!");
 				dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::GameOver, 1.0f);
+				//Game over event gets handled in the Gamemode State, which will trigger the transition to the GameOverState
 				dae::EventManager::GetInstance().QueueEvent({
 					TronEventIds::GameOver,
 					-1,
@@ -46,7 +48,7 @@ public:
 				dae::ServiceLocator::GetSoundSystem().StopLooping();
 				dae::ServiceLocator::GetSoundSystem().Play(dae::SoundIds::PlayerHit, 0.4f);
 				dae::ServiceLocator::GetSoundSystem().PlayLooping(dae::SoundIds::BackgroundMusic, 0.2f);
-
+				// Gets handled in the Gamemode State, which will trigger the reload of the current level
 				dae::EventManager::GetInstance().QueueEvent({
 					TronEventIds::ResetLevel,
 					-1,

@@ -72,7 +72,7 @@ void GameOverState::OnEnter()
 	scene.Add(std::move(highscoreTitleObj));
 
 	float yPos{ 140.f };
-
+	
 	for (int i = 0; i < 10; ++i)
 	{
 		auto lineObj = std::make_unique<dae::GameObject>();
@@ -96,7 +96,6 @@ void GameOverState::OnExit()
 {
 	dae::SceneManager::GetInstance().RemoveAll();
 	m_NameText = nullptr;
-	m_HighscoreText = nullptr;
 	m_HighscoreEntries.clear();
 
 	m_Font.reset();
@@ -220,7 +219,7 @@ void GameOverState::ConfirmLetter()
 
 		if (m_NameText)
 		{
-			m_NameText->SetText("Score Saved ESC OR GAMEPAD B:MAIN MENU");
+			m_NameText->SetText("Score Saved - ESC OR GAMEPAD B MAIN MENU");
 		}
 		return;
 	}

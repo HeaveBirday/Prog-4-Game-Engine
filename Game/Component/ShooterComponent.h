@@ -5,6 +5,9 @@
 #include "ObjectTypeComponent.h"
 namespace dae
 {
+	// ShooterComponent is responsible for handling the shooting mechanics of a tank,
+	// including bullet creation and direction based on the tank's orientation.
+	// It interacts closely with the TankComponent to determine when shooting is possible and to reset cooldowns.
 	class ShooterComponent final : public Component
 	{
 	public:

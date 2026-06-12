@@ -4,6 +4,8 @@
 
 namespace dae
 {
+	// SoundIds namespace defines unique identifiers for each sound effect and music track used in the game.
+	// These IDs are generated using a compile-time hash function (make_sdbm_hash) to ensure they are unique and can be efficiently used for sound management throughout the game.
 	namespace SoundIds
 	{
 		constexpr sound_id GunShot = make_sdbm_hash("GunShot");

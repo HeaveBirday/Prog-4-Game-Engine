@@ -1,4 +1,7 @@
 #pragma once
+
+// Base class for all game states.
+// Each state handles its own input, update logic, and scene setup/cleanup.
 class GameState
 {
 public:

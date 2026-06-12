@@ -1,10 +1,12 @@
 #pragma once
 #include "Components/Component.h"
 #include <glm/glm.hpp>
-#include <cmath>
+
 
 namespace dae
 {
+	// The Direction enum represents the four cardinal directions that a tank can face or move towards. 
+	// It is used by the TankComponent to determine the tank's orientation and movement direction.
 	enum class Direction
 	{
 		Up,
@@ -12,6 +14,7 @@ namespace dae
 		Left,
 		Right
 	};
+	// The TankComponent is responsible for managing the state and behavior of a tank GameObject, including its size, direction, turret rotation, and shooting cooldown.
 	class TankComponent final : public Component
 	{
 	public:

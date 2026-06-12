@@ -33,8 +33,8 @@ Minigin/Font.cpp
  "Minigin/Components/RenderComponent.cpp" 
  "Minigin/Components/TextComponent.h"
  "Minigin/Components/TextComponent.cpp"
- "Minigin/Components/FPSComponent.h"
- "Minigin/Components/FPSComponent.cpp"
+ 
+ 
  "Minigin/Components/WiggleComponent.h"
  "Minigin/Components/WiggleComponent.cpp" 
  "Minigin/Components/TransformComponent.cpp"
@@ -49,14 +49,14 @@ Minigin/Font.cpp
  "Minigin/EventManager.h" 
  "Minigin/EventManager.cpp" 
  "Minigin/DebugEventListener.h"
- "Minigin/Components/HealthComponent.h"
- "Minigin/Components/HealthComponent.cpp" 
- "Minigin/Components/LivesDisplayComponent.h"
- "Minigin/Components/LivesDisplayComponent.cpp"
+ 
+  
+ 
+ 
 
 
- "Minigin/Commands/PrintCommand.cpp"
- "Minigin/Commands/LoseLifeCommand.cpp"
+ 
+ 
  "Minigin/Components/VelocityComponent.h"
  "Minigin/Components/VelocityComponent.cpp" 
  "Minigin/Components/CollisionComponent.h"

@@ -9,6 +9,9 @@
 #include <IEventListener.h>
 namespace dae
 {
+	// BulletComponent handles the movement and collision of bullets fired by tanks. 
+	// It listens for collision events to determine when it hits an enemy, the player, or a wall,
+	// and reacts accordingly (damaging enemies, damaging the player, or bouncing off walls).
 	class BulletComponent final : public Component, public IEventListener
 	{
 	public:

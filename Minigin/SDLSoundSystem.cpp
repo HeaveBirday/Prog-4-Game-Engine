@@ -19,10 +19,11 @@ namespace dae
 		sound_id id;
 		float volume;
 	};
-
+	// SDLSoundSystem::Impl is the internal implementation class for SDLSoundSystem, following the Pimpl idiom to hide implementation details
 	class SDLSoundSystem::Impl
 	{
-
+		//SDL_mixer gives me raw pointers and requires specific destroy functions.
+		//I wrapped them in unique_ptr with custom deleters so resource cleanup happens automatically(RAII)
 		struct MixerDeleter
 		{
 			void operator()(MIX_Mixer* mixer) const
@@ -59,6 +60,7 @@ namespace dae
 		using TrackPtr = std::unique_ptr<MIX_Track, TrackDeleter>;
 		using AudioPtr = std::unique_ptr<MIX_Audio, AudioDeleter>;
 	public:
+		// Constructor initializes the SDL audio subsystem, SDL_mixer, creates a mixer device, and sets up sound tracks for playback
 		Impl()
 		{
 			if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
@@ -90,7 +92,7 @@ namespace dae
 
 			}
 			constexpr int amountOfSfxTracks{ 8 };
-
+			// Create multiple tracks for simultaneous SFX playback
 			for (int idx{}; idx < amountOfSfxTracks; ++idx)
 			{
 				TrackPtr track{ MIX_CreateTrack(m_pMixer.get()) };
@@ -103,7 +105,7 @@ namespace dae
 
 				m_pSfxTracks.push_back(std::move(track));
 			}
-
+			// Create a dedicated track for looping music playback
 			m_pLoopingTrack.reset(MIX_CreateTrack(m_pMixer.get()));
 			if (!m_pLoopingTrack)
 			{
@@ -115,6 +117,7 @@ namespace dae
 			}
 			m_SoundThread = std::thread(&Impl::ThreadMain, this);
 		}
+		// Destructor ensures proper cleanup of resources, stops the sound thread, and shuts down SDL audio and SDL_mixer subsystems
 		~Impl()
 		{
 			{
@@ -170,6 +173,7 @@ namespace dae
 
 			return nullptr;
 		}
+		// Play method queues a sound request for playback, ensuring thread-safe access to the sound queue and checking for mute state before adding requests
 		void Play(sound_id id, float volume)
 		{
 			{
@@ -180,6 +184,7 @@ namespace dae
 			}
 			m_ConditionVariable.notify_one();
 		}
+		// PlayLooping method sets up a sound to play in a loop on the dedicated looping track, checking for the existence of the sound and the looping track, and applying the specified volume
 		void PlayLooping(sound_id id, float volume)
 		{
 			auto it = m_Sounds.find(id);
@@ -217,6 +222,7 @@ namespace dae
 			SDL_DestroyProperties(loopProperties);
 
 		}
+		// StopLooping method stops any currently playing looping sound on the looping track and resets the state to indicate that there is no active looping sound
 		void StopLooping()
 		{
 			if (m_pLoopingTrack)
@@ -227,6 +233,9 @@ namespace dae
 
 			m_HasLoopingSound = false;
 		}
+		// PlaySoundInternal is the internal method that processes a sound request by finding the corresponding audio data, 
+		// selecting a free SFX track, and initiating playback with the specified volume, 
+		// while also handling error cases such as missing sounds or unavailable tracks
 		void PlaySoundInternal(const SoundRequest& request)
 		{
 			auto it = m_Sounds.find(request.id);
@@ -258,6 +267,8 @@ namespace dae
 			}
 
 		}
+		// LoadSound method loads an audio file into the sound system, associating it with a sound ID,
+		// and logs the outcome of the loading process, including error handling for missing files or loading failures
 		void LoadSound(sound_id id, const std::string& filepath)
 		{
 			if (!std::filesystem::exists(filepath))
@@ -276,6 +287,8 @@ namespace dae
 
 
 		}
+		// SetMuted, IsMuted, and ToggleMuted methods manage the mute state of the sound system,
+		// allowing for thread-safe toggling of mute status and ensuring that currently playing sounds are stopped when muting
 		void SetMuted(bool muted)
 		{
 			std::lock_guard lock(m_Mutex);
@@ -286,7 +299,8 @@ namespace dae
 		{
 			return m_IsMuted;
 		}
-
+		// ToggleMuted method toggles the mute state and handles stopping or resuming playback of looping sounds based on the new mute state,
+		// ensuring that the appropriate actions are taken to reflect the change in mute status
 		void ToggleMuted()
 		{
 			std::lock_guard lock(m_Mutex);
@@ -318,6 +332,8 @@ namespace dae
 			}
 			SDL_Log("Sound muted: %s", m_IsMuted ? "true" : "false");
 		}
+		// ThreadMain is the main loop for the sound processing thread, which waits for sound requests to be added to the queue and processes them sequentially,
+		// ensuring that sound playback is handled in a separate thread to avoid blocking the main game loop
 		void ThreadMain()
 		{
 			while (true)

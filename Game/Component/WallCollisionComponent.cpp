@@ -4,11 +4,13 @@
 #include <Components/VelocityComponent.h>
 #include "../Component/EnemyAIComponent.h"
 #include <SDL3/SDL_log.h>
+
 void dae::WallCollisionComponent::Update(float )
 {
 	m_PreviousPos = { GetOwner().GetTransform()->GetX(), GetOwner().GetTransform()->GetY() };
 }
-
+// This component listens for collision events and checks if the owner has collided with a wall. 
+// If so, it resets the owner's position to the previous frame's position and stops its movement.
 void dae::WallCollisionComponent::OnEvent(const Event& event)
 {
 	if (event.id != EventIds::Collision) return;

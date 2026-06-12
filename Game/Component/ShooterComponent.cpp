@@ -18,6 +18,7 @@ void dae::ShooterComponent::Update(float)
 
 void dae::ShooterComponent::Shoot()
 {
+	// if the object is destroyed OR isnt a tank it should return early and not shoot
 	if (GetOwner().IsDestroyed())
 	{
 		SDL_Log("Tank is destroyed");
@@ -28,6 +29,7 @@ void dae::ShooterComponent::Shoot()
 	m_TankComponent->ResetShootCooldown();
 	auto transform = GetOwner().GetTransform();
 	if (!transform) return; 
+
 	//Setting up the direction and spawn position of the bullet based on the rotation of the tank
 	glm::vec2 bulletDirection{};
 	if (m_UseTurretDirection)
@@ -38,9 +40,10 @@ void dae::ShooterComponent::Shoot()
 	{
 		bulletDirection = m_TankComponent->GetForwardDirection();
 	}
+
+	//Creating the bullet GameObject and setting the texture, based on the type of bullet
 	auto bulletGameObject = std::make_unique<GameObject>();
 	std::shared_ptr<Texture2D> texture;
-
 	if (m_BulletType == ObjectType::PlayerBullet)
 	{
 		texture = ResourceManager::GetInstance().LoadTexture("BulletPlayer.png");
@@ -56,6 +59,7 @@ void dae::ShooterComponent::Shoot()
 
 	bulletGameObject->AddComponent<CollisionComponent>(texture->GetSize(), dae::GameCollisionLayers::Bullet);
 
+	//Calculating the spawn position of the bullet based on the center of the tank and the direction its facing, so it spawns in front of the tank instead of inside it
 	glm::vec2 tankSize = m_TankComponent->GetSize();
 	glm::vec2 bulletSize = texture->GetSize();
 	glm::vec2 tankCenter{

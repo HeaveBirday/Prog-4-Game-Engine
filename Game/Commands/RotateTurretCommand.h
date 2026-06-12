@@ -3,6 +3,8 @@
 #include "../Component/TankComponent.h"
 #include <GameObject.h>
 
+// RotateTurretCommand rotates the turret of a tank at a specified speed.
+// It is executed every frame while the corresponding input is active, allowing for smooth turret rotation based on player input.
 class RotateTurretCommand final : public Command
 {
 public:

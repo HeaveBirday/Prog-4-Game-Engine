@@ -3,12 +3,15 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+
+// EnemyAIComponent controls the behavior of enemy tanks, including movement and shooting. It uses the level layout to navigate and avoid walls.
 namespace dae
 {
 
 	class ShooterComponent;
 	class TransformComponent;
 	class TankComponent;
+	// EnemyAIComponent makes the enemy tank move in a random direction until it hits a wall, at which point it picks a new random direction. It also periodically shoots at the player.
 	class EnemyAIComponent final : public Component
 	{
 	public:

@@ -3,7 +3,10 @@
 namespace dae
 {
 	class GameObject;
+	// The Event struct represents an event that can be dispatched to listeners in the game. It contains an event ID, player ID, value, and pointers to involved game objects.
     template <int length>
+	// The sdbm_hash struct is a compile-time implementation of the SDBM hash function, which computes a hash value for a given string. 
+    // It uses template recursion to process each character of the string and calculate the hash value.
     struct sdbm_hash
     {
         consteval static unsigned int _calculate(const char* const text, unsigned int& value)

@@ -1,6 +1,7 @@
 #include "TankComponent.h"
 #include <GameObject.h>
 #include <Components/TransformComponent.h>
+
 glm::vec2 dae::TankComponent::GetForwardDirection() const
 {
 	switch (m_Direction)
@@ -31,7 +32,9 @@ float dae::TankComponent::GetTurretAngle() const
 {
 	return m_TurretAngle;
 }
-
+// This function calculates the direction vector of the turret based on its current angle. 
+// It converts the angle from degrees to radians and 
+// then uses cosine and sine functions to determine the x and y components of the direction vector, respectively.
 glm::vec2 dae::TankComponent::GetTurretDirection() const
 {
 	const float radians = m_TurretAngle * 3.141f / 180.f;
@@ -59,7 +62,7 @@ void dae::TankComponent::ResetShootCooldown()
 {
 	m_ShootCooldown = 0.5f; 
 }
-
+// This function sets the movement direction of the tank based on the input vector and updates the tank's rotation accordingly.
 void dae::TankComponent::SetMoveDirection(glm::vec2 direction)
 {
 	if (direction == glm::vec2{ 0.f, 0.f })

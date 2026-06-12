@@ -6,6 +6,10 @@
 #include <GameObject.h>
 namespace dae
 {
+	// WallCollisionComponent is responsible for handling the collision of a GameObject with walls in the game.
+	// It listens for collision events and, when a collision with a wall is detected,
+	// it resets the position of the GameObject to its previous position before the collision occurred.
+	// This ensures that the GameObject does not pass through walls and maintains proper collision response.
 	class WallCollisionComponent final : public Component, public IEventListener
 	{
 	public:

@@ -10,6 +10,9 @@ namespace dae
 	class TextComponent;
 }
 
+// The GameOverState class represents the state of the game when the player has lost all their lives. 
+// It handles displaying the game over screen, allowing the player to enter their name for the high score list,
+// and managing the high score entries. It inherits from GameState and implements the necessary functions for entering, exiting, handling input, and updating the state.
 class GameOverState final : public GameState
 {
 public:
@@ -37,7 +40,6 @@ private:
 	bool m_IsEnteringName{ true };	
 
 	dae::TextComponent* m_NameText{};
-	dae::TextComponent* m_HighscoreText{};
 
 	bool m_WasUpPressed{ false };
 	bool m_WasDownPressed{ false };

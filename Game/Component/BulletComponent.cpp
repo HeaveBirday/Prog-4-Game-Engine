@@ -8,6 +8,7 @@
 #include <cmath>
 #include <SDL3/SDL_log.h>
 #include <EventManager.h>
+// BulletComponent handles the behavior of bullets, including movement, collision responses (bouncing, damaging enemies, hitting the player), and lifetime management.
 void dae::BulletComponent::Update(float dt)
 {
 	m_HasBouncedThisFrame = false;
@@ -22,7 +23,8 @@ void dae::BulletComponent::Update(float dt)
 		return;
 	}
 }
-
+// OnEvent listens for collision events and determines if the bullet is involved. 
+// If it is, it checks the type of the other object and responds accordingly (bouncing off walls, damaging enemies, hitting the player).
 void dae::BulletComponent::OnEvent(const Event& event)
 {
 	if (GetOwner().IsDestroyed()) return;
@@ -65,7 +67,7 @@ void dae::BulletComponent::OnEvent(const Event& event)
 		}
 		return;
 	}
-
+	// If the bullet is a player bullet and it hits an enemy tank or recognizer, damage the enemy
 	if (bulletType->GetType() == ObjectType::PlayerBullet &&
 		(otherType->GetType() == ObjectType::EnemyTank ||
 		 otherType->GetType() == ObjectType::Recognizer))
@@ -82,7 +84,7 @@ void dae::BulletComponent::OnEvent(const Event& event)
 		return;
 	}
 }
-
+// When a player bullet hits an enemy, this function is called to apply damage to the enemy's health component.
 void dae::BulletComponent::EnemyHit(GameObject* otherObject)
 {
 		auto health = otherObject->GetComponent<HealthComponent>();
@@ -112,7 +114,7 @@ void dae::BulletComponent::EnemyHit(GameObject* otherObject)
 		}
 	GetOwner().Destroy();
 }
-
+// When an enemy bullet hits the player, this function is called to trigger a PlayerHit event and destroy the bullet.
 void dae::BulletComponent::PlayerHit()
 {
 	EventManager::GetInstance().QueueEvent(
@@ -127,7 +129,10 @@ void dae::BulletComponent::PlayerHit()
 	GetOwner().Destroy();
 	return;
 }
-
+// Bounce calculates the new direction of the bullet after colliding with a wall,
+// based on the side of the wall it hit, and updates the bullet's velocity and position accordingly.
+// It also increments the bounce count and destroys the bullet if it has bounced too many times.
+// The bounce logic uses the overlap between the bullet and the wall to determine the normal of the collision and reflects the bullet's direction across that normal.
 void dae::BulletComponent::Bounce(GameObject* wall)
 {
 	++m_BounceCount;

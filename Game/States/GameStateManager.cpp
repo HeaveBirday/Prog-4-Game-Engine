@@ -1,5 +1,6 @@
 #include "GameStateManager.h"
 #include "GameState.h"
+
 void GameStateManager::SetState(std::unique_ptr<GameState> newState)
 {
 	m_PendingState = std::move(newState);

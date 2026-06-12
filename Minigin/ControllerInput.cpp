@@ -18,6 +18,7 @@ public:
 	{
 
 	}
+	// Update the controller state and determine button changes
 	void Update()
 	{
 		CopyMemory(&previousState, &currentState, sizeof(XINPUT_STATE));
@@ -27,6 +28,7 @@ public:
 		buttonsPressedThisFrame = buttonChanges & currentState.Gamepad.wButtons;
 		buttonsReleasedThisFrame = buttonChanges & (~currentState.Gamepad.wButtons);
 	}
+	// Check if a specific button was pressed, held, or released
 	bool IsButtonPressed(Button button) const
 	{
 		return (buttonsPressedThisFrame & GetButtonFlag(button)) != 0;
@@ -43,6 +45,7 @@ public:
 	}
 
 private:
+	// Helper function to map Button enum to XINPUT button flags
 	WORD GetButtonFlag(Button button) const
 	{
 		switch (button)

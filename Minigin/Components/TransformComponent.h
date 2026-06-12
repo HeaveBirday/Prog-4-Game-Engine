@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 namespace dae
 {
+    // Stores local and world position information for a GameObject, uses a dirty flag to recalculate world transform changes only when needed
     class TransformComponent final : public Component
     {
     public:

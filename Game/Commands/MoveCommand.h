@@ -3,7 +3,9 @@
 #include <glm/glm.hpp>
 #include "Components/VelocityComponent.h"
 #include "../Component/TankComponent.h"
-#include <Components/RenderComponent.h>
+
+// MoveCommand sets the direction of the VelocityComponent based on player input and updates the TankComponent's direction accordingly. 
+// It allows the player to move their tank in the desired direction.
 class MoveCommand final : public Command
 {
 public:

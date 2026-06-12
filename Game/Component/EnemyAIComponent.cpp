@@ -24,12 +24,14 @@ dae::EnemyAIComponent::EnemyAIComponent(GameObject* owner, const std::vector<std
 
 	m_ShootTimer = m_ShootInterval;
 }
-
+// The enemy tank will move in its current direction until it reaches the center of the next tile.
+// If that tile is a wall, it will pick a new random direction instead.
+// Every few seconds, it will shoot at the player.
 void dae::EnemyAIComponent::Update(float dt)
 {
 	//Movement
 	glm::vec2 currentPos = m_Transform->GetWorldPosition();
-
+	// If not currently moving to a tile, determine the next tile and set it as the target position
 	if (!m_IsMovingToTile)
 	{
 		glm::ivec2 currentTile = GetCurrentTile();
@@ -37,7 +39,7 @@ void dae::EnemyAIComponent::Update(float dt)
 			currentTile.x + static_cast<int>(m_CurrentDirection.x),
 			currentTile.y + static_cast<int>(m_CurrentDirection.y)
 		};
-
+		// Check if the next tile is a wall. If it is, pick a new random direction and return early
 		if (IsWallAtTile(nextTile.x, nextTile.y))
 		{
 			PickRandomDirection();
@@ -50,11 +52,11 @@ void dae::EnemyAIComponent::Update(float dt)
 
 		m_IsMovingToTile = true;
 	}
-
+	// Move towards the target position
 	glm::vec2 toTarget = m_TargetPosition - currentPos; 
 	float distance = glm::length(toTarget);
 	float step = m_Speed * dt;
-
+	// If we're close enough to the target position, snap to it and pick a new direction. Otherwise, move towards it.
 	if (distance <= step)
 	{
 		m_Transform->SetPosition(m_TargetPosition.x, m_TargetPosition.y);
@@ -83,7 +85,7 @@ void dae::EnemyAIComponent::Update(float dt)
 		m_ShootTimer = m_ShootInterval;
 	}
 }
-
+// Picks a random direction (up, down, left, right) and sets it as the current movement direction. Also updates the TankComponent's move direction if it exists.
 void dae::EnemyAIComponent::PickRandomDirection()
 {
 	static std::random_device rd;
@@ -108,7 +110,7 @@ void dae::EnemyAIComponent::PickRandomDirection()
 	if (m_Tank)
 		m_Tank->SetMoveDirection(m_CurrentDirection);
 }
-
+// Checks if there is a wall at the given tile coordinates. Returns true if the coordinates are out of bounds or if the tile is a wall character ('#').
 bool dae::EnemyAIComponent::IsWallAtTile(int x, int y) const
 {
 	if (y < 0 || y >= static_cast<int>(m_Level.size())) return true;
@@ -116,7 +118,7 @@ bool dae::EnemyAIComponent::IsWallAtTile(int x, int y) const
 
 	return m_Level[y][x] == '#';
 }
-
+// Gets the current tile coordinates of the enemy tank by dividing its world position by the tile size and converting to integers.
 glm::ivec2 dae::EnemyAIComponent::GetCurrentTile() const
 {
 	return{

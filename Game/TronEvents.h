@@ -1,6 +1,7 @@
 #pragma once
 #include <Event.h>
-
+// TronEvents.h defines custom event IDs for the Tron game,
+// These event IDs are used throughout the game to trigger specific responses when these events occur (e.g., updating the score, resetting the level, transitioning to the game over state).
 namespace TronEventIds
 {
 	constexpr dae::EventId EnemyDestroyed = dae::make_sdbm_hash("EnemyDestroyed");

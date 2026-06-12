@@ -5,7 +5,9 @@
 	#include <SDL3/SDL_log.h>
 	namespace dae
 	{
+		
 		using CollisionLayer = unsigned int;
+		// Axis-aligned bounding box collider. Registers itself in a static collider list and queues collision events when overlaps are found
 		class CollisionComponent final : public Component
 		{
 		public:

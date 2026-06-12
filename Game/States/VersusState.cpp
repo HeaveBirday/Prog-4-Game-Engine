@@ -97,6 +97,7 @@ void VersusState::OnEvent(const dae::Event& event)
 	}
 	else if (event.id == TronEventIds::EnemyDestroyed)
 	{
+		// Check if the enemy tank is the EnemyPlayer. If yes the Input Bindings get cleared, and the Original Player's bindings get rebinded
 		if (event.objectA == m_VersusPlayer || event.objectB == m_VersusPlayer)
 		{
 			m_VersusPlayer = nullptr;
@@ -128,7 +129,7 @@ void VersusState::UpdateHud()
 	if (m_LivesText)
 		m_LivesText->SetText("Lives: " + std::to_string(GameSession::Lives));
 }
-
+// The same as COOP state taking a second player and binding it to the controller, but the SecondPlayer acts as an enemy. Once the EnemyPlayer is killed, his input gets reset 
 void VersusState::LoadLevel()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();

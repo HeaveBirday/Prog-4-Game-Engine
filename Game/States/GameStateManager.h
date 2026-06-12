@@ -1,6 +1,10 @@
 #pragma once
 #include <memory>
 
+
+// Owns the active GameState and safely switches to a new state.
+// State changes are delayed until Update() so states are not replaced
+// in the middle of their own input handling.
 class GameState;
 class GameStateManager final
 {

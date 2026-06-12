@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include <ServiceLocator.h>
 #include "../SoundIds.h"
+
+// HealthComponent manages the health of a GameObject, allowing it to take damage and be destroyed when health reaches zero. It also plays a sound effect when taking damage.
 class HealthComponent final : public dae::Component
 {
 public:

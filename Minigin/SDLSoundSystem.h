@@ -5,6 +5,10 @@
 
 namespace dae
 {
+	// SDLSoundSystem is a concrete implementation of the SoundSystem interface using SDL_mixer for audio playback
+	// It manages sound loading, playback, and muting functionality, and runs a dedicated thread for processing sound requests
+	// The implementation details are hidden using the Pimpl idiom to reduce compilation dependencies and improve encapsulation
+	// Note: The actual audio processing is done in a separate thread to avoid blocking the main game loop, and synchronization is handled using mutexes and condition variables
 	class SDLSoundSystem final : public SoundSystem
 	{
 	public :

@@ -2,6 +2,7 @@
 #include <GameObject.h>
 #include "../Component/ShooterComponent.h"
 
+// tells the owner's ShooterComponent to shoot a bullet.
 void dae::ShootBulletCommand::Execute(float)
 {
 

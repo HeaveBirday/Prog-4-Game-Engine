@@ -3,7 +3,8 @@
 namespace dae
 {
 	class GameObject;
-
+	// ShootBulletCommand is a command that, when executed, will make the player shoot a bullet.
+	// It holds a reference to the player's GameObject to access necessary components for shooting.
 	class ShootBulletCommand final : public Command
 	{
 	public:

@@ -4,6 +4,10 @@
 #include <GameObject.h>
 #include <Components/TextComponent.h>
 #include <memory>
+
+// Handles the single-player gameplay state.
+// It loads levels, binds player input, listens to gameplay events,
+// updates the HUD, and transitions to GameOver when needed.
 class SinglePlayerState final : public GameState, public dae::IEventListener
 {
 public:

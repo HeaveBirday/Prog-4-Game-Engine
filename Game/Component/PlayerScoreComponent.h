@@ -4,6 +4,7 @@
 #include <EventManager.h>
 #include "../TronEvents.h"
 #include "../GameSession.h"
+// PlayerScoreComponent listens for EnemyDestroyed events and updates the player's score accordingly. It also provides a method to retrieve the current score for display in the HUD.
 class PlayerScoreComponent final : public dae::Component, public dae::IEventListener
 {
 public:

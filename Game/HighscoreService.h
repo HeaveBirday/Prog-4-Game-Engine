@@ -7,7 +7,8 @@ struct HighscoreEntry
 	std::string playerName;
 	int score{};
 };
-
+// HighscoreService manages the loading, saving, and updating of high scores for the game. 
+// It reads and writes high scores to a file, checks if a given score qualifies as a high score, and allows adding new high score entries.
 class HighscoreService final
 {
 public:

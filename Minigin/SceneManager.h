@@ -8,6 +8,7 @@
 namespace dae
 {
 	class Scene;
+	// The SceneManager is responsible for managing multiple scenes in the game. It allows for creating new scenes, retrieving the active scene, updating and rendering all scenes, and removing all scenes when necessary.
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:

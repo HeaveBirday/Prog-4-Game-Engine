@@ -1,6 +1,9 @@
 #pragma once
 #include <Components/Component.h>
 
+// ObjectTypeComponent is a simple component that holds the type of the GameObject,
+// allowing for easy identification and categorization of objects in the game. 
+// This can be useful for collision handling, rendering decisions, or any logic that depends on the type of object.
 enum class ObjectType
 {
     Player,
@@ -9,7 +12,8 @@ enum class ObjectType
     PlayerBullet,
     EnemyBullet,
     Wall,
-    Diamond
+    Diamond,
+
 };
 class ObjectTypeComponent final : public dae::Component
 {

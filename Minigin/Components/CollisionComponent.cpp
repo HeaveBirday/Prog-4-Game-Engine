@@ -3,21 +3,21 @@
 #include <SDL3/SDL_log.h>
 #include <EventManager.h>
 
+// Collision detection is done in the Update function of each CollisionComponent. 
+// Each component checks for collisions against all other components, but only if its own pointer is smaller than the other component's pointer. 
+// This way, we avoid checking the same pair of components twice, since if A checks against B, then B will skip checking against A.
 void dae::CollisionComponent::Update(float)
 {
-	//A FIX WOULD BE TO ADD A LATE UPDATE FUNCTION THAT IS CALLED AFTER ALL UPDATES, AND CHECK FOR COLLISIONS THERE. IF I DO THE LATE UPDATE, WHAT I WANT TO DO IS
-	//THE MOVEMENT UPDATE IN THE LATE UPDATE, SO THAT ALL COLLISION COMPONENTS HAVE THEIR NEW POSITIONS BEFORE CHECKING FOR COLLISIONS. THEN I CAN ALSO ADD A SEPARATE LATE UPDATE FUNCTION FOR 
-	//OTHER COMPONENTS THAT NEED TO RUN AFTER COLLISIONS ARE CHECKED, LIKE HEALTH COMPONENTS OR SOMETHING.
-
+	// Check for collisions against all other colliders
 	for (CollisionComponent* collider : s_AllColliders)
 	{
 		if (collider == this)
 			continue;
+		// Avoid checking the same pair twice.
 		if (this > collider)
 			continue;
 		if (CheckCollision(*collider))
 		{
-			//SDL_Log("Collision detected between %p and %p", &GetOwner(), &collider->GetOwner());
 			EventManager::GetInstance().QueueEvent(
 				Event{
 					dae::EventIds::Collision,
@@ -27,11 +27,8 @@ void dae::CollisionComponent::Update(float)
 					&collider->GetOwner()
 				});
 		}
-
-		
 	}
 }
-
 
 bool dae::CollisionComponent::CheckCollision(const CollisionComponent& otherComponent) const
 {
@@ -49,7 +46,7 @@ bool dae::CollisionComponent::CheckCollision(const CollisionComponent& otherComp
 
 	return false;
 }
-
+// The bounding box is calculated by taking the local collision rectangle and adding the world position of the GameObject to it.
 glm::vec4 dae::CollisionComponent::GetBoundingBox() const
 {
 	return { m_CollisionRect.x + GetOwner().GetTransform()->GetX(), m_CollisionRect.y + GetOwner().GetTransform()->GetY(),

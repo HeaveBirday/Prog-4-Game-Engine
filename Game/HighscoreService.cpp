@@ -2,6 +2,8 @@
 #include <fstream>
 #include <algorithm>
 #include <SDL3/SDL_log.h>
+
+// The Load function reads high scores from a file, validates them, and keeps only the top 10 scores.
 void HighscoreService::Load()
 {
 	m_Highscores.clear();
@@ -13,6 +15,7 @@ void HighscoreService::Load()
 	}
 	std::string name;
 	int score{};
+	// Read each line from the file, expecting a player name and score. Validate the name length and log any invalid entries.
 	while (file >> name >> score)
 	{
 		if (name.size() == 3)
@@ -25,7 +28,7 @@ void HighscoreService::Load()
 			SDL_Log("Invalid entry in highscore file: %s %d", name.c_str(), score);
 		}
 	}
-
+	// Sort the high scores in descending order and keep only the top 10 entries.
 	std::sort(m_Highscores.begin(), m_Highscores.end(),
 		[](const HighscoreEntry& a, const HighscoreEntry& b)
 		{
@@ -37,7 +40,7 @@ void HighscoreService::Load()
 		m_Highscores.resize(10);
 	}
 }
-
+// The Save function writes the current high scores to a file, logging any errors that occur during the file opening process.
 void HighscoreService::Save() const
 {
 	std::ofstream file(m_FilePath);
@@ -51,7 +54,8 @@ void HighscoreService::Save() const
 		file << entry.playerName << " " << entry.score << "\n";
 	}
 }
-
+// IsHighscore checks if a given score qualifies as a high score by comparing it to the current list of high scores,
+// allowing for new entries if there are fewer than 10 scores or if the new score is higher than the lowest existing score.
 bool HighscoreService::IsHighscore(int score) const
 {
 	if (m_Highscores.size() < 10)
@@ -59,7 +63,7 @@ bool HighscoreService::IsHighscore(int score) const
 
 	return score > m_Highscores.back().score;
 }
-
+// AddScore adds a new score to the high score list if the player's name is valid (exactly 3 characters),
 void HighscoreService::AddScore(const std::string& playerName, int score)
 {
 
@@ -70,7 +74,7 @@ void HighscoreService::AddScore(const std::string& playerName, int score)
 	}
 
 	m_Highscores.push_back({ playerName, score });
-
+	// After adding the new score, sort the high scores in descending order and keep only the top 10 entries.
 	std::sort(m_Highscores.begin(), m_Highscores.end(),
 		[](const HighscoreEntry& a, const HighscoreEntry& b)
 		{

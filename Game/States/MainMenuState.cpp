@@ -13,9 +13,11 @@
 #include "../GameSession.h"
 #include <ServiceLocator.h>
 #include "../SoundIds.h"
+
 extern GameStateManager g_GameStateManager;
 void MainMenuState::OnEnter()
 {
+	
 	GameSession::Reset();
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);

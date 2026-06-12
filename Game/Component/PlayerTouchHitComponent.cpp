@@ -4,6 +4,8 @@
 #include <IEventListener.h>
 #include <Components/Component.h>
 #include "../TronEvents.h"
+// This component listens for collision events involving the player. If the player collides with a diamond,
+// they are teleported to a random walkable tile. If they collide with an enemy or recognizer, a PlayerHit event is queued.
 void dae::PlayerTouchHitComponent::OnEvent(const Event& event)
 {
 	if (event.id != EventIds::Collision) return;
@@ -23,9 +25,10 @@ void dae::PlayerTouchHitComponent::OnEvent(const Event& event)
 		TeleportPlayer();
 		return;
 	}
-
+	// Enemy collision
 	if (otherType->GetType() == ObjectType::Recognizer || otherType->GetType() == ObjectType::EnemyTank)
 	{
+
 		EventManager::GetInstance().QueueEvent(dae::Event{
 		TronEventIds::PlayerHit,
 		-1,
@@ -37,7 +40,7 @@ void dae::PlayerTouchHitComponent::OnEvent(const Event& event)
 	
 
 }
-
+// Teleports the player to a random walkable tile on the level. Walkable tiles are represented by '_' in the level data.
 void dae::PlayerTouchHitComponent::TeleportPlayer()
 {
 	std::vector<glm::ivec2> walkableTiles;

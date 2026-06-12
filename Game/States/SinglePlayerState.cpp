@@ -25,8 +25,14 @@
 
 #include <ServiceLocator.h>
 #include "../SoundIds.h"
+
+// Handles the single-player gameplay state.
+// It loads levels, binds player input, listens to gameplay events,
+// updates the HUD, and transitions to GameOver when needed.
+
 extern GameStateManager g_GameStateManager;
 
+// Listen for gameplay events such as player death, enemy death, and level reset.
 void SinglePlayerState::OnEnter()
 {
 	dae::EventManager::GetInstance().AddListener(this);
@@ -34,7 +40,7 @@ void SinglePlayerState::OnEnter()
 	LoadLevel();
 
 }
-
+// Cleaning up State 
 void SinglePlayerState::OnExit()
 {
 	dae::EventManager::GetInstance().RemoveListener(this);
@@ -50,7 +56,8 @@ void SinglePlayerState::OnExit()
 void SinglePlayerState::HandleInput()
 {
 }
-
+// State changes are delayed with flags so they happen safely during Update,
+// instead of directly inside event callbacks.
 void SinglePlayerState::Update(float )
 {
 	if (m_ShouldResetLevel)
@@ -62,7 +69,7 @@ void SinglePlayerState::Update(float )
 
 		LoadLevel();
 	}
-
+	
 	if (m_ShouldGameOver)
 	{
 		m_ShouldGameOver = false;
@@ -71,6 +78,7 @@ void SinglePlayerState::Update(float )
 		g_GameStateManager.SetState(std::make_unique<GameOverState>());
 		return;
 	}
+	
 	if (m_ShouldLoadNextLevel)
 	{
 		m_ShouldLoadNextLevel = false;
@@ -123,11 +131,12 @@ void SinglePlayerState::UpdateHud()
 
 }
 
+// Builds a complete playable level by creating the game systems,
+// loading the selected map layout, spawning the player, counting enemies,
+// and creating the HUD.
 void SinglePlayerState::LoadLevel()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();	
-
-
 
 	// Game Manager to handle global game systems 
 	auto gameManager = std::make_unique<dae::GameObject>();
