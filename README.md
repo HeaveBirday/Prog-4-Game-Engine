@@ -1,88 +1,115 @@
-﻿# Minigin
+﻿# Tron BattleTanks
 
-Minigin is a very small project using [SDL3](https://www.libsdl.org/) and [glm](https://github.com/g-truc/glm) for 2D c++ game projects. It is in no way a game engine, only a barebone start project where everything sdl related has been set up. It contains glm for vector math, to aleviate the need to write custom vector and matrix classes.
+## About the Game
 
-[![Build Status](https://github.com/avadae/minigin/actions/workflows/cmake.yml/badge.svg)](https://github.com/avadae/cmake/actions)
-[![Build Status](https://github.com/avadae/minigin/actions/workflows/emscripten.yml/badge.svg)](https://github.com/avadae/emscripten/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/avadae/minigin?logo=github&sort=semver)](https://github.com/avadae/minigin/releases/latest)
+Tron BattleTanks is a project based on the arcade game Tron 1982. The original Tron game features 4 different mini games, whilst this Project focuses only on the Battle Tanks mini game.
+The player controls a tank shooting down enemy tanks while progressing through different levels. The game has a Single Player mode, a Coop mode and a Versus mode. 
+In Coop mode there are two players working together. In Versus mode, the second player takes control over an Enemy Tank, and can shoot the Player Tank down.
+The player starts with 3 extra lives, so 4 in total. The player can achieve highscores that are saved between sessions. Only the top 10 highscores overall get saved
 
-# Goal
 
-Minigin can/may be used as a start project for the exam assignment in the course [Programming 4](https://youtu.be/j96Oh6vzhmg) at DAE. In that assignment students need to recreate a popular 80's arcade game with a game engine they need to program themselves. During the course we discuss several game programming patterns, using the book '[Game Programming Patterns](https://gameprogrammingpatterns.com/)' by [Robert Nystrom](https://github.com/munificent) as reading material. 
+## Controls
 
-# Disclaimer
+### Keyboard
 
-Minigin is, despite perhaps the suggestion in its name, **not** a game engine. It is just a very simple SDL3 ready project with some of the scaffolding in place to get started. None of the patterns discussed in the course are used yet (except singleton which use we challenge during the course). It is up to the students to implement their own vision for their engine, apply patterns as they see fit, create their game as efficient as possible.
+W - Move Up
+A - Move Left
+S - Move Down
+D - Move Right
+Z - Rotate Turret Left
+X - Rotate Turret Right
+Space - Shoot
+F1 - Skip Level
+F2 - Mute Sound
 
-# Use
+### Controller
 
-Get the source from this project, or since students need to have their work on github too, they can use this repository as a template. Hit the "Use this template" button on the top right corner of the github page of this project.
+D-Pad - Movement
+X - Rotate Turret Left
+B - Rotate Turret Right
+A - Shoot
 
-## Windows version
+## Engine Features
 
-Either
-- Open the root folder in Visual Studio 2026; this will be recognized as a cmake project.
-  
-Or
-- Install CMake 
-- Install CMake and CMake Tools extensions in Visual Code
-- Open the root folder in Visual Code,  this will be recognized as a cmake project.
+The project started from the Minigin template and was expanded throughout the semester.
+Some of the systems I added are:
 
-Or
-- Use whatever editor you like :)
+- Component system
+- Scene management
+- Collision system
+- Input system with keyboard and controller support
+- Event system
+- Sound system
+- Game state management
+- Highscore saving/loading
+- UpdateLoop
 
-## Emscripten (web) version
+## Design Choices
 
-### On windows
+### Component Pattern
 
-For installing all of the needed tools on Windows I recommend using [Chocolatey](https://chocolatey.org/). You can then run the following in a terminal to install what is needed:
+I used a component oriented architecture because it allows me to build GameObjects out of smaller reusable pieces instead of creating large inheritance trees.
+Examples include:
 
-    choco install -y cmake
-    choco install -y emscripten
-    choco install -y ninja
-    choco install -y python
+- TankComponent
+- ShooterComponent
+- CollisionComponent
+- VelocityComponent
 
-In a terminal, navigate to the root folder. Run this: 
+### Command Pattern
 
-    mkdir build_web
-    cd build_web
-    emcmake cmake ..
-    emmake ninja
+Input is handled through commands such as MoveCommand and ShootBulletCommand.
+This makes it easy to support both keyboard and controller input without duplicating gameplay code.
 
-To be able to see the webpage you can start a python webserver in the build_web folder
+### State Pattern
 
-    python -m http.server
+I use different states for:
 
-Then browse to http://localhost:8000 and you're good to go.
+- Main Menu
+- Single Player
+- Co-op
+- Versus
+- Game Over
 
-### On OSX
+This keeps the logic for each screen separated.
 
-On Mac you can use homebrew
+### Event System
 
-    brew install cmake
-    brew install emscripten
-    brew install python
+I implemented an EventManager so objects can communicate without directly knowing about each other.
+For example, enemy destruction and collision events are sent through the event system
 
-In a terminal on OSX, navigate to the root folder. Run this: 
+### Threading
 
-    mkdir build_web
-    cd build_web
-    emcmake cmake .. -DCMAKE_OSX_ARCHITECTURES=""
-    emmake make
+The sound system runs on a separate thread so playing sounds does not block the main game loop.
+There are multiple allocated tracks, so they dont interfere with each other.
 
-To be able to see the webpage you can start a python webserver in the build_web folder
 
-    python3 -m http.server
+## Highscores
 
-Then browse to http://localhost:8000 and you're good to go.
+At the end of the game the player can enter a 3 letter name similar to old arcade games, by iterating through all letters.
+Highscores are saved to a file and loaded again when the game starts.
 
-## Github Actions
 
-This project is build with github actions.
-- The CMake workflow builds the project in Debug and Release for Windows and serves as a check that the project builds on that platform.
-- The Emscripten workflow generates a web version of the project and publishes it as a [github page](https://avadae.github.io/minigin/). 
-  - The url of that page will be `https://<username>.github.io/<repository>/`
-- You can embed this page with 
+## Git Repository
 
-```<iframe style="position: absolute; top: 0px; left: 0px; width: 1024px; height: 576px;" src="https://<username>.github.io/<repository>/" loading="lazy"></iframe>```
+<https://github.com/HeaveBirday/Prog-4-Game-Engine>
 
+## Credits
+
+### Alessandro Manzini
+
+Helped me understand and implement the CollisionComponent system. Also helped out and gave feedback on bullet bouncing calculations.
+
+### Rani Nagels
+
+Helped me a lot throughout the project, especially with understanding CMake, splitting the project into a game and engine project, and general development advice.
+
+### Nils Hammond
+
+Provided feedback and guidance for the InputManager implementation.
+
+## Author
+
+Georgi Georgiev
+DAE Game Dev
+Programming 4 Exam Project
